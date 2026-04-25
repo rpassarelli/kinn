@@ -18,9 +18,12 @@ async def run_persona(persona_id: str, turns: int, out_dir: Path) -> dict:
     persona = load_persona(persona_id)
     client = KinnClient()
     memory = LocalMemory(root=out_dir / persona_id)
+    session_dir = out_dir / persona_id
     agent = KinnAgent(
         client=client, memory=memory, probes=list(BOOTSTRAP_PROBES),
-        # Task 26 will add: events_path=..., ledger_path=..., session_id=...
+        events_path=session_dir / "events.jsonl",
+        ledger_path=session_dir / "costs.jsonl",
+        session_id=persona_id,
     )
     sim = StakeholderSimulator(client=client, persona=persona)
 

@@ -14,11 +14,11 @@ async def test_turn_updates_memory(memory, empty_belief):
     mock_client.predict_mutations = AsyncMock(return_value=[
         SignalMutation(block=4, new_resolution="low", quote="tired"),
     ])
-    mock_client.run_turn_tool = AsyncMock(return_value=TurnOutput(
+    mock_client.run_turn_tool = AsyncMock(return_value=(TurnOutput(
         heard=["burnout noted"], delta="→ Block 4: empty → low",
         next_question="What keeps you up at night?",
         signal_mutations=[SignalMutation(block=4, new_resolution="low", quote="I'm exhausted")],
-    ))
+    ), {"input_tokens": 100, "cache_read_input_tokens": 50, "cache_creation_input_tokens": 0, "output_tokens": 30}))
 
     agent = KinnAgent(client=mock_client, memory=memory, probes=list(BOOTSTRAP_PROBES))
     out = await agent.turn(user_message="I'm exhausted. I don't know what to do.")
@@ -46,9 +46,10 @@ async def test_turn_retries_on_validation_error(memory):
     mock_client.sample_answers = AsyncMock(return_value=["x"])
     mock_client.predict_mutations = AsyncMock(return_value=[])
     valid = TurnOutput(heard=["ok"], delta="", next_question="What now?", signal_mutations=[])
+    usage = {"input_tokens": 100, "cache_read_input_tokens": 50, "cache_creation_input_tokens": 0, "output_tokens": 30}
     err = _make_real_validation_error()
     # First two calls raise ValidationError, third succeeds
-    mock_client.run_turn_tool = AsyncMock(side_effect=[err, err, valid])
+    mock_client.run_turn_tool = AsyncMock(side_effect=[err, err, (valid, usage)])
     agent = KinnAgent(client=mock_client, memory=memory, probes=list(BOOTSTRAP_PROBES))
     out = await agent.turn("hi")
     assert out.next_question == "What now?"
@@ -61,9 +62,9 @@ async def test_turn_triggers_immediate_recompile_when_no_pending(memory):
     mock_client = AsyncMock()
     mock_client.sample_answers = AsyncMock(return_value=["x"])
     mock_client.predict_mutations = AsyncMock(return_value=[])
-    mock_client.run_turn_tool = AsyncMock(return_value=TurnOutput(
+    mock_client.run_turn_tool = AsyncMock(return_value=(TurnOutput(
         heard=["ok"], delta="", next_question="What's next?", signal_mutations=[],
-    ))
+    ), {"input_tokens": 100, "cache_read_input_tokens": 50, "cache_creation_input_tokens": 0, "output_tokens": 30}))
     mock_client.recompile_probes_two_phase = AsyncMock(return_value=[
         Probe(order=200, target_block=2, depth="dimension", draft="What must you never do?"),
     ])
@@ -97,9 +98,9 @@ async def test_drain_awaits_background_recompile(memory):
     mock_client = AsyncMock()
     mock_client.sample_answers = AsyncMock(return_value=["x"])
     mock_client.predict_mutations = AsyncMock(return_value=[])
-    mock_client.run_turn_tool = AsyncMock(return_value=TurnOutput(
+    mock_client.run_turn_tool = AsyncMock(return_value=(TurnOutput(
         heard=["x"], delta="", next_question="what now?", signal_mutations=[],
-    ))
+    ), {"input_tokens": 100, "cache_read_input_tokens": 50, "cache_creation_input_tokens": 0, "output_tokens": 30}))
     mock_client.recompile_probes_two_phase = AsyncMock(side_effect=slow_recompile)
 
     agent = KinnAgent(client=mock_client, memory=memory, probes=list(BOOTSTRAP_PROBES))

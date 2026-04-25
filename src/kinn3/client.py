@@ -178,9 +178,12 @@ class _SamplerMixin:
         probe,
         user_message: str,
         correction_hint: str = "",
+        return_usage: bool = False,
     ):
         """Execute one turn via emit_turn_response tool. NO thinking (forced tool).
         Raises pydantic.ValidationError if model output violates schema; agent retries.
+
+        If return_usage=True, returns (TurnOutput, usage_dict) tuple.
         """
         from .tools import EMIT_TURN_RESPONSE_TOOL
         from .models import TurnOutput
@@ -194,15 +197,21 @@ class _SamplerMixin:
         )
         if correction_hint:
             user_content += f"\n\n# CORRECTION HINT (retry)\n{correction_hint}"
-        result = await self.forced_tool_call(
-            system=system,
-            user_content=user_content,
-            tool=EMIT_TURN_RESPONSE_TOOL,
-            max_tokens=2048,
-        )
+        if return_usage:
+            result, usage = await self.forced_tool_call(
+                system=system, user_content=user_content,
+                tool=EMIT_TURN_RESPONSE_TOOL, max_tokens=2048, return_usage=True,
+            )
+        else:
+            result = await self.forced_tool_call(
+                system=system, user_content=user_content,
+                tool=EMIT_TURN_RESPONSE_TOOL, max_tokens=2048,
+            )
+            usage = None
         if not result:
             raise RuntimeError("emit_turn_response tool was not called")
-        return TurnOutput(**result)  # raises ValidationError on schema failure
+        out = TurnOutput(**result)  # raises ValidationError on schema failure
+        return (out, usage) if return_usage else out
 
     async def recompile_probes_two_phase(
         self,
@@ -320,9 +329,12 @@ class KinnClient(_SamplerMixin):
         user_content: str,
         tool: dict[str, Any],
         max_tokens: int = 2048,
-    ) -> dict[str, Any] | None:
+        return_usage: bool = False,
+    ):
         """Force a specific tool call. NO thinking (API incompatibility).
         Wrapped in _with_retries for 429 / 5xx / timeout handling.
+
+        If return_usage=True, returns (result, usage_dict) tuple.
         """
         assert self.raw is not None, "No API key set"
 
@@ -337,10 +349,19 @@ class KinnClient(_SamplerMixin):
             )
 
         msg = await _with_retries(call)
+        usage = None
+        if return_usage:
+            usage = {
+                "input_tokens": getattr(msg.usage, "input_tokens", 0),
+                "cache_read_input_tokens": getattr(msg.usage, "cache_read_input_tokens", 0) or 0,
+                "cache_creation_input_tokens": getattr(msg.usage, "cache_creation_input_tokens", 0) or 0,
+                "output_tokens": getattr(msg.usage, "output_tokens", 0),
+            }
         for block in msg.content:
             if getattr(block, "type", None) == "tool_use" and block.name == tool["name"]:
-                return dict(block.input)
-        return None
+                result = dict(block.input)
+                return (result, usage) if return_usage else result
+        return (None, usage) if return_usage else None
 
     # -- primitive 2: extended thinking, text output, no tools ----------------
 
@@ -351,8 +372,12 @@ class KinnClient(_SamplerMixin):
         user_content: str,
         thinking_budget: int = 24000,
         max_tokens: int = 4096,
-    ) -> str:
-        """Extended thinking, returns text. NO tools. Wrapped in _with_retries."""
+        return_usage: bool = False,
+    ):
+        """Extended thinking, returns text. NO tools. Wrapped in _with_retries.
+
+        If return_usage=True, returns (text, usage_dict) tuple.
+        """
         assert self.raw is not None, "No API key set"
 
         async def call():
@@ -365,8 +390,17 @@ class KinnClient(_SamplerMixin):
             )
 
         msg = await _with_retries(call)
+        usage = None
+        if return_usage:
+            usage = {
+                "input_tokens": getattr(msg.usage, "input_tokens", 0),
+                "cache_read_input_tokens": getattr(msg.usage, "cache_read_input_tokens", 0) or 0,
+                "cache_creation_input_tokens": getattr(msg.usage, "cache_creation_input_tokens", 0) or 0,
+                "output_tokens": getattr(msg.usage, "output_tokens", 0),
+            }
         out = []
         for block in msg.content:
             if getattr(block, "type", None) == "text":
                 out.append(block.text)
-        return "\n".join(out)
+        text = "\n".join(out)
+        return (text, usage) if return_usage else text

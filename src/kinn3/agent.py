@@ -45,15 +45,21 @@ class KinnAgent:
         self,
         client: AgentClient,
         memory: MemoryAdapter,
-        *,                                 # all kwargs after — Task 26 adds events_path/ledger_path/session_id
+        *,
         probes: list[Probe] | None = None,
         events_path: Path | None = None,
+        ledger_path: Path | None = None,
+        session_id: str = "",
     ):
         self.client = client
         self.memory = memory
         self._pending_tasks: set[asyncio.Task] = set()
         from .events import EventLog
+        from .metrics import SessionMetrics
         self.events = EventLog(events_path) if events_path else None
+        self.metrics = SessionMetrics(ledger_path=ledger_path)
+        self.session_id = session_id
+        self._last_usage: dict | None = None
         self._init_state(probes or list(BOOTSTRAP_PROBES))
 
     def _init_state(self, probes: list[Probe]) -> None:
@@ -66,6 +72,8 @@ class KinnAgent:
             self.memory.write("next_probe_order", str(initial_max + 1))
 
     async def turn(self, user_message: str) -> TurnOutput:
+        import time
+        _turn_start = time.time()
         belief = VSMBeliefState.model_validate_json(self.memory.read("belief_state"))
         probes = _probes_from_json(self.memory.read("probes"))
 
@@ -112,6 +120,15 @@ class KinnAgent:
             self._pending_tasks.add(task)
             task.add_done_callback(self._pending_tasks.discard)
 
+        # Record metrics (Task 26)
+        self.metrics.record(
+            turn_n=new_turn,
+            wall_clock_s=time.time() - _turn_start,
+            usage=self._last_usage or {},
+            session_id=self.session_id,
+        )
+        self._last_usage = None
+
         return out
 
     async def _run_turn_with_retry(
@@ -121,13 +138,16 @@ class KinnAgent:
         last_err: Exception | None = None
         for attempt in range(MAX_VALIDATION_RETRIES + 1):
             try:
-                return await self.client.run_turn_tool(
+                out, usage = await self.client.run_turn_tool(
                     system=sys_prompt,
                     belief_summary=belief_summary,
                     probe=probe,
                     user_message=user_message,
                     correction_hint=hint,
+                    return_usage=True,
                 )
+                self._last_usage = usage
+                return out
             except ValidationError as e:
                 last_err = e
                 hint = f"Previous attempt failed validation: {str(e)[:200]}. Fix exactly-one-'?' and ≤30 word rules."

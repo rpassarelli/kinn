@@ -15,10 +15,10 @@ async def test_end_to_end_one_persona_smoke(memory):
     mc.sample_answers = AsyncMock(return_value=["x", "y", "z"])
     mc.predict_mutations = AsyncMock(return_value=[])
     mc.simulate_answer = AsyncMock(return_value="We're a family dental clinic. I'm tired.")
-    mc.run_turn_tool = AsyncMock(side_effect=lambda **kw: TurnOutput(
+    mc.run_turn_tool = AsyncMock(side_effect=lambda **kw: (TurnOutput(
         heard=["tired"], delta="", next_question="What keeps you up at night?",
         signal_mutations=[SignalMutation(block=4, new_resolution="low", quote="I'm tired.")],
-    ))
+    ), {"input_tokens": 100, "cache_read_input_tokens": 50, "cache_creation_input_tokens": 0, "output_tokens": 30}))
     mc.recompile_probes_two_phase = AsyncMock(return_value=list(BOOTSTRAP_PROBES))
 
     persona = load_persona("dental-clinic")
