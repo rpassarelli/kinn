@@ -111,3 +111,21 @@ async def test_drain_awaits_background_recompile(memory):
     # drain() must await it
     await agent.drain()
     assert recompile_done.is_set()
+
+
+@pytest.mark.asyncio
+async def test_turn_rejects_duplicate_question(memory):
+    """If next_question hashes to same as a prior question, retry once."""
+    def _u(): return {"input_tokens": 100, "cache_read_input_tokens": 50, "cache_creation_input_tokens": 0, "output_tokens": 30}
+    mock_client = AsyncMock()
+    mock_client.sample_answers = AsyncMock(return_value=["x"])
+    mock_client.predict_mutations = AsyncMock(return_value=[])
+    mock_client.run_turn_tool = AsyncMock(side_effect=[
+        (TurnOutput(heard=["x"], delta="", next_question="What hurts most?", signal_mutations=[]), _u()),
+        (TurnOutput(heard=["x"], delta="", next_question="What hurts most?", signal_mutations=[]), _u()),  # dup
+        (TurnOutput(heard=["x"], delta="", next_question="Who feels overloaded?", signal_mutations=[]), _u()),
+    ])
+    agent = KinnAgent(client=mock_client, memory=memory, probes=list(BOOTSTRAP_PROBES))
+    out1 = await agent.turn("hi")
+    out2 = await agent.turn("more")  # should retry away from "What hurts most?"
+    assert out2.next_question != out1.next_question

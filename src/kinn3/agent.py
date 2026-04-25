@@ -20,6 +20,7 @@ from pathlib import Path
 from typing import Protocol
 from pydantic import ValidationError
 from .bed_llm import select_probe, update_belief, _belief_summary
+from .invariants import hash_question, is_duplicate
 from .memory import MemoryAdapter
 from .models import Probe, TurnOutput, VSMBeliefState
 from .probes import BOOTSTRAP_PROBES
@@ -96,6 +97,18 @@ class KinnAgent:
             sys_prompt=sys_prompt, belief_summary=belief_summary,
             probe=probe, user_message=user_message,
         )
+
+        # Hash dedup — retry once if the question was asked before in this session.
+        prior_hashes = set((self.memory.read("question_hashes") or "").split())
+        if is_duplicate(out.next_question, prior_hashes):
+            if self.events:
+                self.events.emit(actor="agent", event="duplicate_question_detected",
+                                 turn=belief.turn + 1, question=out.next_question)
+            out = await self._run_turn_with_retry(
+                sys_prompt=sys_prompt, belief_summary=belief_summary,
+                probe=probe, user_message=user_message,
+            )
+        self.memory.append("question_hashes", hash_question(out.next_question))
 
         # 3. Apply mutations + bump turn
         new_turn = belief.turn + 1

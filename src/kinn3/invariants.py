@@ -1,5 +1,7 @@
 """Load kinn2 invariants and run post-hoc checks on turn output."""
 from __future__ import annotations
+import hashlib
+import re
 from pathlib import Path
 import yaml
 from .models import TurnOutput
@@ -22,3 +24,14 @@ def check_turn_output(out: TurnOutput) -> list[str]:
     if any(m.new_resolution == "high" and len(m.quote) < 10 for m in out.signal_mutations):
         errs.append("high-resolution promotion requires a substantive quote")
     return errs
+
+
+def hash_question(q: str) -> str:
+    """Stable hash of normalized question text (case + whitespace + punctuation insensitive)."""
+    norm = re.sub(r"\s+", " ", q.lower().strip())
+    norm = re.sub(r"[^\w\s]", "", norm)
+    return hashlib.sha256(norm.encode()).hexdigest()[:16]
+
+
+def is_duplicate(q: str, prior_hashes: set[str]) -> bool:
+    return hash_question(q) in prior_hashes
