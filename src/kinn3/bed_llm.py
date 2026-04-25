@@ -33,3 +33,23 @@ def _belief_summary(b: VSMBeliefState) -> str:
         q = "; ".join(block.quotes[:2]) if block.quotes else "(no quotes)"
         lines.append(f"  Block {block_id}: {block.resolution} — {q}")
     return "\n".join(lines)
+
+
+from .models import SignalMutation
+
+
+def update_belief(
+    belief: VSMBeliefState,
+    mutations: list[SignalMutation],
+    turn: int,
+) -> VSMBeliefState:
+    """Apply mutations to produce a new belief state. Pure function."""
+    new = belief.model_copy(deep=True)
+    new.turn = turn
+    for m in mutations:
+        block = new.blocks[m.block]
+        block.resolution = m.new_resolution
+        if m.quote and m.quote not in block.quotes:
+            block.quotes.append(m.quote)
+        block.updated_turn = turn
+    return new
