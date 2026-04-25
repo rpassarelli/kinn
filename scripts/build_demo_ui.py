@@ -197,69 +197,94 @@ main {
 #chat-pane  { background: var(--bg);    overflow-y: auto; padding: 32px 36px; display: flex; flex-direction: column; gap: 28px; }
 #model-pane { background: var(--panel); padding: 28px 32px; display: flex; flex-direction: column; }
 
-/* ── CHAT ───────────────────────────────────────── */
+/* ── CHAT (vertical flow diagram) ───────────────── */
 .empty-chat {
   margin: auto; text-align: center; color: var(--text-muted); font-style: italic;
   font-size: 16px;
 }
-.chat-turn {
-  display: flex; flex-direction: column; gap: 18px;
-  animation: fade-in 0.5s ease;
+.flow {
+  display: flex; flex-direction: column; align-items: stretch; gap: 0;
 }
-@keyframes fade-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-.chat-turn .turn-tag {
+.flow .turn-tag {
   font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.2em;
-  font-family: ui-monospace, monospace; align-self: center;
+  font-family: ui-monospace, monospace; text-align: center; margin-bottom: 16px;
 }
-.bubble {
-  padding: 22px 26px; border-radius: 16px; line-height: 1.5;
-  border: 1px solid;
+.step {
+  border: 1px solid var(--border); border-radius: 14px;
+  padding: 18px 22px; opacity: 0; transform: translateY(8px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
 }
-/* ── Stakeholder: 3 bullet signals ──────────────── */
-.bubble.user {
-  background: rgba(88,166,255,0.06); border-color: rgba(88,166,255,0.25);
-  align-self: flex-start; max-width: 96%;
+.step.shown { opacity: 1; transform: translateY(0); }
+.step .step-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.18em;
+  margin-bottom: 12px; font-family: ui-monospace, monospace;
 }
-.bubble.user .label {
-  font-size: 10px; font-weight: 700; letter-spacing: 0.15em;
-  color: var(--user); margin-bottom: 14px; font-family: ui-monospace, monospace;
+.connector {
+  text-align: center; color: var(--border); font-size: 22px;
+  margin: 6px 0; opacity: 0; transition: opacity 0.4s ease;
 }
-.bubble.user ul {
-  list-style: none; padding: 0; margin: 0;
+.connector.shown { opacity: 1; }
+
+/* ① INPUT — stakeholder signals */
+.step.input  { background: rgba(88,166,255,0.06); border-color: rgba(88,166,255,0.3); }
+.step.input  .step-label { color: var(--user); }
+.signals { list-style: none; padding: 0; margin: 0; }
+.signals li {
+  font-size: 16px; font-weight: 500; line-height: 1.45;
+  padding: 5px 0 5px 22px; position: relative;
 }
-.bubble.user li {
-  font-size: 17px; font-weight: 500; line-height: 1.45;
-  padding: 6px 0 6px 22px; position: relative; color: var(--text);
-}
-.bubble.user li::before {
-  content: "›"; position: absolute; left: 4px; top: 4px;
+.signals li::before {
+  content: "›"; position: absolute; left: 4px; top: 2px;
   color: var(--user); font-weight: 700; font-size: 18px;
 }
 
-/* ── Kinn3: thinking + output, two sections ─────── */
-.bubble.agent {
-  background: rgba(210,168,255,0.07); border-color: rgba(210,168,255,0.35);
-  align-self: flex-end; max-width: 96%;
-}
-.bubble.agent .label {
-  font-size: 10px; font-weight: 700; letter-spacing: 0.15em;
-  color: var(--agent); margin-bottom: 14px; font-family: ui-monospace, monospace;
-}
-.bubble.agent .section { margin-bottom: 14px; }
-.bubble.agent .section:last-child { margin-bottom: 0; }
-.bubble.agent .sub-label {
-  font-size: 9px; font-weight: 700; letter-spacing: 0.18em;
-  color: var(--text-muted); margin-bottom: 6px; font-family: ui-monospace, monospace;
-}
-.bubble.agent .thinking {
+/* ② UNDERSTOOD + DELTA */
+.step.understand { background: rgba(210,168,255,0.06); border-color: rgba(210,168,255,0.35); }
+.step.understand .step-label { color: var(--agent); }
+.thinking-text {
   font-size: 13px; line-height: 1.5; color: var(--text-dim);
   font-family: ui-monospace, "SF Mono", monospace;
   background: rgba(0,0,0,0.25); padding: 10px 14px; border-radius: 8px;
-  border-left: 3px solid var(--agent);
+  border-left: 3px solid var(--agent); margin-bottom: 14px;
 }
-.bubble.agent .output {
+.delta-chips {
+  display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+}
+.delta-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: linear-gradient(135deg, rgba(255,211,61,0.18), rgba(63,185,80,0.12));
+  border: 1px solid rgba(255,211,61,0.5); border-radius: 22px;
+  padding: 6px 12px; font-size: 13px; font-weight: 700;
+  font-family: ui-monospace, monospace; color: var(--text);
+  position: relative;
+}
+.delta-chip .arrow { color: var(--text-muted); margin: 0 2px; }
+.delta-chip .to {
+  font-size: 10px; padding: 2px 6px; border-radius: 8px;
+  background: rgba(63,185,80,0.3); color: var(--high); letter-spacing: 0.1em;
+}
+.delta-chip.flying { opacity: 0; }
+.delta-empty {
+  color: var(--text-muted); font-size: 12px; font-style: italic;
+}
+
+/* ③ OUTPUT — next question */
+.step.output  { background: rgba(63,185,80,0.06); border-color: rgba(63,185,80,0.4); }
+.step.output  .step-label { color: var(--high); }
+.next-q-text {
   font-size: 22px; font-weight: 600; line-height: 1.35; color: var(--text);
-  padding: 6px 0;
+  padding: 4px 0;
+}
+
+/* ── Flying particles (delta → VSM block) ───────── */
+.particle {
+  position: fixed; z-index: 1000; pointer-events: none;
+  background: linear-gradient(135deg, var(--gold), var(--high));
+  color: #1a1500; font-weight: 800; font-size: 11px;
+  font-family: ui-monospace, monospace;
+  padding: 5px 10px; border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(255,211,61,0.6);
+  transition: transform 1.0s cubic-bezier(0.4, 0.0, 0.2, 1), opacity 0.3s ease;
 }
 
 /* ── MODEL (big VSM) ────────────────────────────── */
@@ -433,50 +458,162 @@ function escapeHtml(s) {
   return (s || "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"})[c]);
 }
 
+// Choreographed timeline per turn (ms)
+const TIMING = {
+  inputAppear:    100,   // ① INPUT step fades in
+  understandAppear: 700, // ② UNDERSTOOD step fades in (with delta chips visible)
+  particlesFly:   1300,  // particles spawn & start flying toward VSM blocks
+  vsmUpdate:      2300,  // particles arrive → VSM upgrades + pulses
+  outputAppear:   2600,  // ③ OUTPUT step (next question) fades in
+};
+
+let stepTimers = [];
+function clearStepTimers() {
+  stepTimers.forEach(t => clearTimeout(t));
+  stepTimers = [];
+}
+
 function renderChat() {
   const pane = document.getElementById("chat-pane");
+  clearStepTimers();
+  // Remove any in-flight particles from prior renders
+  document.querySelectorAll(".particle").forEach(p => p.remove());
   if (currentTurn === 0) {
     pane.innerHTML = '<div class="empty-chat">Press <b>▶ Run 30s Demo</b> to watch a dental-clinic owner\'s interview unfold.</div>';
     return;
   }
   const t = TURNS[currentTurn - 1];
+  const promos = PROMOTIONS[currentTurn - 1] || [];
+
   const signals = (t.signals || []).map(s => `<li>${escapeHtml(s)}</li>`).join("");
+  const deltaChipsHtml = promos.length
+    ? promos.map(p => `
+        <div class="delta-chip" data-block="${p.block}">
+          <span>${BLOCK_ICONS[p.block]}</span>
+          <span>Block ${p.block}</span>
+          <span class="arrow">→</span>
+          <span class="to">${p.to}</span>
+        </div>`).join("")
+    : '<div class="delta-empty">No image shift this turn.</div>';
+
   pane.innerHTML = `
-    <div class="chat-turn">
+    <div class="flow">
       <div class="turn-tag">Turn ${t.turn} of ${TURNS.length}</div>
-      <div class="bubble user">
-        <div class="label">👤 STAKEHOLDER · 3 signals</div>
-        <ul>${signals}</ul>
+      <div class="step input" id="step-input">
+        <div class="step-label">① INPUT · stakeholder signals</div>
+        <ul class="signals">${signals}</ul>
       </div>
-      <div class="bubble agent">
-        <div class="label">🤖 KINN3</div>
-        <div class="section">
-          <div class="sub-label">⚙ Thinking · image shift</div>
-          <div class="thinking">${escapeHtml(t.thinking || "(no shift this turn)")}</div>
-        </div>
-        <div class="section">
-          <div class="sub-label">→ Output · next question</div>
-          <div class="output">${escapeHtml(t.next_question)}</div>
-        </div>
+      <div class="connector" id="conn-1">▼</div>
+      <div class="step understand" id="step-understand">
+        <div class="step-label">② UNDERSTOOD · image shift (Δ)</div>
+        <div class="thinking-text">${escapeHtml(t.thinking || "(no shift)")}</div>
+        <div class="delta-chips" id="delta-chips">${deltaChipsHtml}</div>
+      </div>
+      <div class="connector" id="conn-2">▼</div>
+      <div class="step output" id="step-output">
+        <div class="step-label">③ OUTPUT · next question</div>
+        <div class="next-q-text">${escapeHtml(t.next_question)}</div>
       </div>
     </div>
   `;
   pane.scrollTop = 0;
+
+  // Choreograph
+  stepTimers.push(setTimeout(() => {
+    document.getElementById("step-input")?.classList.add("shown");
+  }, TIMING.inputAppear));
+
+  stepTimers.push(setTimeout(() => {
+    document.getElementById("conn-1")?.classList.add("shown");
+    document.getElementById("step-understand")?.classList.add("shown");
+  }, TIMING.understandAppear));
+
+  if (promos.length) {
+    stepTimers.push(setTimeout(launchParticles, TIMING.particlesFly));
+  }
+
+  stepTimers.push(setTimeout(renderVSMUpgrade, TIMING.vsmUpdate));
+
+  stepTimers.push(setTimeout(() => {
+    document.getElementById("conn-2")?.classList.add("shown");
+    document.getElementById("step-output")?.classList.add("shown");
+  }, TIMING.outputAppear));
+}
+
+function launchParticles() {
+  const promos = PROMOTIONS[currentTurn - 1] || [];
+  const chips = document.querySelectorAll(".delta-chip");
+  chips.forEach((chip, idx) => {
+    const promo = promos[idx];
+    if (!promo) return;
+    const targetEl = document.querySelector(`.vsm-block[data-block="${promo.block}"]`);
+    if (!targetEl) return;
+    const c = chip.getBoundingClientRect();
+    const t = targetEl.getBoundingClientRect();
+    // Particle starts at chip center
+    const p = document.createElement("div");
+    p.className = "particle";
+    p.style.left = c.left + "px";
+    p.style.top  = c.top + "px";
+    p.style.opacity = "0";
+    p.innerHTML = `${BLOCK_ICONS[promo.block]} +${promo.delta_rank}`;
+    document.body.appendChild(p);
+    // Hide source chip
+    chip.classList.add("flying");
+    // Compute delta
+    const dx = (t.left + t.width/2) - c.left - p.offsetWidth/2;
+    const dy = (t.top  + t.height/2) - c.top  - p.offsetHeight/2;
+    // Small stagger per particle
+    setTimeout(() => {
+      p.style.opacity = "1";
+      requestAnimationFrame(() => {
+        p.style.transform = `translate(${dx}px, ${dy}px) scale(1.15)`;
+      });
+    }, idx * 120);
+    // Cleanup after arrival
+    setTimeout(() => {
+      p.style.opacity = "0";
+      setTimeout(() => p.remove(), 400);
+    }, 1100 + idx * 120);
+  });
+}
+
+// Two-phase VSM: at turn-advance show PRIOR snapshot (no change yet);
+// then renderVSMUpgrade() flips to current snapshot (pulses fire).
+let vsmShowsCurrent = false;
+
+function renderVSMUpgrade() {
+  vsmShowsCurrent = true;
+  renderVSM();
 }
 
 function renderVSM() {
   const blocksDiv = document.getElementById("vsm-blocks");
   blocksDiv.innerHTML = "";
-  const snapshot = currentTurn === 0
-    ? Object.fromEntries(Object.keys(BLOCK_NAMES).map(k => [k, {resolution: "empty", quotes: []}]))
-    : SNAPSHOTS[currentTurn - 1];
-  const prevSnapshot = currentTurn > 1 ? SNAPSHOTS[currentTurn - 2] : null;
+  // Two-phase rendering: show prior snapshot until particles arrive.
+  // - currentTurn = 0  → all empty
+  // - vsmShowsCurrent  → SNAPSHOTS[currentTurn - 1]
+  // - else             → SNAPSHOTS[currentTurn - 2] (or empty if turn 1)
+  let snapshot;
+  let prevSnapshot = null;
+  if (currentTurn === 0) {
+    snapshot = Object.fromEntries(Object.keys(BLOCK_NAMES).map(k => [k, {resolution: "empty", quotes: []}]));
+  } else if (vsmShowsCurrent) {
+    snapshot = SNAPSHOTS[currentTurn - 1];
+    prevSnapshot = currentTurn > 1 ? SNAPSHOTS[currentTurn - 2] : Object.fromEntries(
+      Object.keys(BLOCK_NAMES).map(k => [k, {resolution: "empty", quotes: []}]));
+  } else {
+    // Show prior snapshot (no change yet; particles haven't arrived)
+    snapshot = currentTurn > 1 ? SNAPSHOTS[currentTurn - 2] : Object.fromEntries(
+      Object.keys(BLOCK_NAMES).map(k => [k, {resolution: "empty", quotes: []}]));
+  }
 
   for (const [bid, name] of Object.entries(BLOCK_NAMES)) {
     const s = snapshot[bid];
     const justPromoted = prevSnapshot && prevSnapshot[bid].resolution !== s.resolution;
     const div = document.createElement("div");
     div.className = `vsm-block ${s.resolution}${justPromoted ? " just-promoted" : ""}`;
+    div.dataset.block = bid;
     div.innerHTML = `
       <div class="block-num">B${bid}</div>
       <div>
@@ -549,8 +686,11 @@ function renderMetrics() {
 }
 
 function render(captionOverride = null) {
-  renderChat();
-  renderVSM();
+  // Reset VSM "before" state — flips to "current" via renderVSMUpgrade()
+  // after particles arrive (see TIMING.vsmUpdate).
+  vsmShowsCurrent = false;
+  renderVSM();      // shows PRIOR snapshot
+  renderChat();     // schedules particles + flip
   renderCaption(captionOverride);
   renderProgress();
   renderMetrics();
