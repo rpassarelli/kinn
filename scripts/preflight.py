@@ -26,7 +26,7 @@ async def assertion_A1_tool_choice_thinking_rejected(client: AsyncAnthropic) -> 
         await client.messages.create(
             model=MODEL,
             max_tokens=128,
-            thinking={"type": "enabled", "budget_tokens": 1024},
+            thinking={"type": "adaptive"},
             tools=[{
                 "name": "noop", "description": "noop",
                 "input_schema": {"type": "object", "properties": {}},
@@ -87,11 +87,14 @@ async def assertion_A3_model_id_resolves(client: AsyncAnthropic) -> str:
 
 async def assertion_A4_thinking_returns_text(client: AsyncAnthropic) -> str:
     """thinking + no tools should return at least one text block."""
-    msg = await client.messages.create(
-        model=MODEL, max_tokens=512,
-        thinking={"type": "enabled", "budget_tokens": 1024},
-        messages=[{"role": "user", "content": "What is 2+2? Answer in one sentence."}],
-    )
+    try:
+        msg = await client.messages.create(
+            model=MODEL, max_tokens=512,
+            thinking={"type": "adaptive"},
+            messages=[{"role": "user", "content": "What is 2+2? Answer in one sentence."}],
+        )
+    except BadRequestError as e:
+        return f"FAIL: {str(e)[:200]}"
     text_blocks = [b for b in msg.content if getattr(b, "type", None) == "text"]
     if not text_blocks or not any(b.text.strip() for b in text_blocks):
         return "FAIL: thinking-enabled response had no usable text block"
