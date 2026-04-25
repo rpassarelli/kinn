@@ -1,0 +1,1013 @@
+{
+  "turns": [
+    {
+      "turn": 1,
+      "user": "*leans back in chair, rubs eyes*\n\nWe're a family dentistry clinic in Matosinhos\u2014been here, what, twelve years now? We do a lot of pediatric work, some orthodontics, general cleanings, restorations. Standard stuff. We had a solid patient base, families who come back year after year. But... *pauses, looks away* ...four months ago one of my dentists left for a hospital position, and I haven't been able to replace him. So now it's just me and one other dentist trying to cover the load we used to split three ways, and honestly? Everything's backing up. Appointments are weeks out. Patients are angry. I'm tired. The money's tight because we're understaffed but we can't hire faster than I can train someone, and the admin team is working overtime trying to manage the chaos. It's... *trails off* ...est\u00e1 tudo um caos, you know? Not where I wanted to be.",
+      "signals": [
+        "twelve years",
+        "four months ago one of my dentists left",
+        "Appointments are weeks out. Patients are angry. I'm tired."
+      ],
+      "thinking": "Block 4 (Algedonic) \u2192 mid; Block 6 (S1 Operations) \u2192 low; Block 3 (Change Moment) still empty \u2014 posture not yet named.",
+      "next_question": "When you picture the clinic stabilizing, are you trying to claw back to what you had, or is something about the old shape no longer what you want?",
+      "signal_mutations": [
+        {
+          "block": 4,
+          "new_resolution": "mid",
+          "quote": "Appointments are weeks out. Patients are angry. I'm tired."
+        },
+        {
+          "block": 6,
+          "new_resolution": "low",
+          "quote": "just me and one other dentist trying to cover the load we used to split three ways"
+        },
+        {
+          "block": 1,
+          "new_resolution": "low",
+          "quote": "family dentistry clinic in Matosinhos\u2014been here, what, twelve years now"
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "user": "*shifts in chair, eyes narrowing slightly*\n\nHonestly? I don't know. I mean... yes, I want the third dentist back. I want the schedule to breathe again. But... *rubs face* ...when I think about \"stabilizing,\" I'm not thinking about growth or some new vision. I'm thinking about not closing. About not losing the patients I've had for ten, twelve years because they got tired of waiting three weeks for a cleaning. The families know us. They trust us. That's... that's the thing I'm terrified of losing. \n\n*pause*\n\nThe old shape? I liked it. Or I thought I did. Now I'm not sure if I actually liked running a clinic or if I just liked not being the one sitting in both chairs, you know? Right now I'd take anything that gets me back to normal\u2014back to sleeping, back to remembering my kids' names. So yeah, claw back. For now. But ask me that again in six months if I'm still here. *looks away* I might have a different answer.",
+      "signals": [
+        "I'm thinking about not closing",
+        "The families know us. They trust us. That's... the thing I'm terrified of losing",
+        "I just liked not being the one sitting in both chairs"
+      ],
+      "thinking": "Block 4 promoted to high (multiple algedonic quotes: terror of losing patients, depletion, provisional commitment). Block 2 moves to low (trust/families named as the thing that must not be lost). Block 3 moves to low (posture: Fighting to Survive, \"claw back... for now\").",
+      "next_question": "When you say the families \"trust us\"\u2014what specifically have they been trusting you for that a three-week wait is starting to break?",
+      "signal_mutations": [
+        {
+          "block": 4,
+          "new_resolution": "high",
+          "quote": "back to sleeping, back to remembering my kids' names"
+        },
+        {
+          "block": 2,
+          "new_resolution": "low",
+          "quote": "The families know us. They trust us. That's... the thing I'm terrified of losing."
+        },
+        {
+          "block": 3,
+          "new_resolution": "low",
+          "quote": "I'd take anything that gets me back to normal\u2014back to sleeping... So yeah, claw back. For now."
+        }
+      ]
+    },
+    {
+      "turn": 3,
+      "user": "*leans forward slightly, elbows on desk*\n\nThe trust is... it's not about the teeth, if that's what you mean. It's the continuity. These kids\u2014I've been seeing some of them since they were five, six years old. I know their names, their fears. One girl, Sofia, she was terrified of the drill, cried every time. Her mother would almost not bring her back. But we took time, we talked to her, let her touch the instruments. By the time she was eight, nine, she'd sit down and we could work. Her mom told me once that Sofia actually *looks forward* to appointments now. *pause, voice quieter* That's what they trust. That we know them. That we're not rushing. And now... *rubs jaw* ...now I'm rushed. Everything's rushed. Sofia's mom called last week asking for an appointment\u2014first time in months\u2014and I told her we're booked until March. March. She didn't say much, just said she'd try somewhere else. And I just... *trails off, stares at desktop* ...I couldn't tell her no without feeling like I was betraying her. That's what the three-week wait breaks. Not the tooth. The relationship. And I'm losing that, appointment by appointment, and I can't stop it.",
+      "signals": [
+        "It's not about the teeth... it's the continuity",
+        "I've been seeing some of them since they were five, six years old",
+        "now I'm rushed. Everything's rushed"
+      ],
+      "thinking": "Block 2 (Purpose/Positioning) promotes low\u2192high: identity is explicitly continuity-of-relationship, not dentistry. Block 4 reinforced with relational-betrayal signal.",
+      "next_question": "If continuity is what you actually sell, how would you describe the business in one line\u2014to someone who's never walked into your clinic?",
+      "signal_mutations": [
+        {
+          "block": 2,
+          "new_resolution": "high",
+          "quote": "It's not about the teeth... it's the continuity. That's what they trust. That we know them."
+        },
+        {
+          "block": 4,
+          "new_resolution": "high",
+          "quote": "I couldn't tell her no without feeling like I was betraying her. That's what the three-week wait breaks. Not the tooth. The relationship."
+        }
+      ]
+    },
+    {
+      "turn": 4,
+      "user": "*pauses, looks up from desk*\n\nWe're a pediatric and family dentistry clinic where parents trust us to know their kids by name\u2014to take time with them, to remember that Sofia was scared of the drill and now she's not. Not a factory. A place. *voice drops slightly* And right now I'm failing at that because I'm one person trying to be three, and that's... that's the real problem, isn't it? Not that we don't have chairs or equipment. We have all that. We just don't have *me* anymore. Not enough of me. *rubs eyes, then looks back at you* So the one-line answer is: we're a relationship clinic running on fumes. That's what we've become.",
+      "signals": [
+        "pediatric and family dentistry clinic where parents trust us to know their kids by name",
+        "Not a factory. A place.",
+        "one person trying to be three"
+      ],
+      "thinking": "Block 2 reinforced ('relationship clinic', 'Not a factory'); Block 6 nudged toward mid via 'one person trying to be three'. Block 3 still low\u2014pinned probe unanswered.",
+      "next_question": "When you picture 'back to normal,' is it strictly three dentists doing what you did before, or have you considered other shapes you've dismissed?",
+      "signal_mutations": [
+        {
+          "block": 2,
+          "new_resolution": "high",
+          "quote": "we're a relationship clinic running on fumes"
+        },
+        {
+          "block": 6,
+          "new_resolution": "mid",
+          "quote": "one person trying to be three"
+        }
+      ]
+    },
+    {
+      "turn": 5,
+      "user": "*leans back, fatigue visibly settling deeper*\n\nOther shapes? *long pause* Look, I've thought about it. Hygienists doing more of the routine cleanings\u2014I know some clinics do that, but then I'd have to retrain my team, and I don't have the bandwidth to retrain anyone right now. I'm barely keeping the chairs filled. Or... *waves hand vaguely* ...maybe bringing in a younger dentist part-time, someone fresh who doesn't need as much supervision. But honestly? I haven't seriously explored it because I'm in survival mode. Three dentists was the shape that worked before, and my brain just keeps saying \"get back there.\" *voice flattens slightly* I know that's not thinking. That's just... exhaustion talking. But when you're this tired, you don't redesign. You just want your old life back. *looks away* So no, I haven't really considered other shapes. I should probably. But I can't think straight enough to know what would actually work.",
+      "signals": [
+        "Hygienists doing more of the routine cleanings... but then I'd have to retrain my team",
+        "maybe bringing in a younger dentist part-time, someone fresh who doesn't need as much supervision",
+        "I haven't seriously explored it because I'm in survival mode"
+      ],
+      "thinking": "Block 6 stays mid\u2014two alternative shapes named (hygienist scope expansion, part-time junior dentist) but explicitly unexplored; reveals decision posture is reactive, not designed.",
+      "next_question": "Before the third dentist left\u2014was it a sudden departure, a slow drift, or something you saw coming and couldn't prevent?",
+      "signal_mutations": [
+        {
+          "block": 6,
+          "new_resolution": "mid",
+          "quote": "Three dentists was the shape that worked before, and my brain just keeps saying get back there"
+        }
+      ]
+    },
+    {
+      "turn": 6,
+      "user": "*stares at hands for a moment*\n\nHe gave me three weeks' notice. Three weeks. *voice hardens slightly* I knew he'd been talking to the hospital\u2014we all knew\u2014but I thought... I don't know what I thought. That he'd stay another year, maybe. That I could convince him the work here mattered more. *pauses, jaw tightens* But he was tired too. Same reason I'm tired now. Long hours, stretched thin, patients backing up even then. The hospital offered him regular shifts, better pay, no admin headache. So he left. And I... *trails off, then continues quietly, almost to himself* ...I didn't fight hard enough to keep him. Didn't have the money to match the offer. Didn't have the energy to make a counter-argument that wasn't just \"please stay, I need you.\" *looks up, eyes heavy* So was it sudden? No. But could I have prevented it? *shrugs, the gesture defeated* Maybe. If I'd seen it coming earlier and actually done something about it instead of just... hoping it wouldn't happen. Now I'm the one trapped here, and I wonder if the next dentist\u2014if I ever find one\u2014will look at me drowning and decide the hospital's looking pretty good too. *rubs face* That's the real fear.",
+      "signals": [
+        "He gave me three weeks' notice. Three weeks.",
+        "I knew he'd been talking to the hospital\u2014we all knew",
+        "I didn't fight hard enough to keep him. Didn't have the money to match the offer."
+      ],
+      "thinking": "Block 5 moves empty \u2192 low: a quote now exists about the absence of any early-warning or retention mechanism (\"instead of just... hoping it wouldn't happen\"). Block 4 reinforced with retention-fear quote.",
+      "next_question": "You said you didn't see it coming earlier\u2014were there signals from him in the months before, and was there anyone whose job it was to notice?",
+      "signal_mutations": [
+        {
+          "block": 5,
+          "new_resolution": "low",
+          "quote": "If I'd seen it coming earlier and actually done something about it instead of just... hoping it wouldn't happen"
+        },
+        {
+          "block": 4,
+          "new_resolution": "high",
+          "quote": "the next dentist\u2014if I ever find one\u2014will look at me drowning and decide the hospital's looking pretty good too"
+        }
+      ]
+    },
+    {
+      "turn": 7,
+      "user": "*goes very still for a moment, then exhales slowly*\n\nSignals? Yeah, there were signals. He stopped staying late. Stopped joking with the hygienists. One of my admin staff\u2014Carolina\u2014she mentioned to me, what, three months before he left, that he'd asked her about the hospital's benefits package. Carolina told me. *voice becomes quieter, slightly bitter* And I... I didn't do anything with it. I thanked her for telling me and then just... kept working. Kept pretending it wasn't real. Because if I acknowledged it, I'd have to act, and I didn't know *how* to act\u2014money was already tight, I couldn't suddenly give him a raise I didn't have. So I let it sit. *looks up, exhaustion and something like shame crossing his face* And now I'm angry at myself because Carolina was doing her job\u2014she was watching the team\u2014and I ignored her. Which means I also ignored *him*. And then I'm angry at him for leaving, but really I'm angry at *me* for not... *trails off, shakes head* ...for not seeing what was right in front of me. Or seeing it and choosing not to see it. I don't even know which is worse. *stares at desk* There was no one whose job it was to notice. That was supposed to be me. And I failed.",
+      "signals": [
+        "He stopped staying late. Stopped joking with the hygienists.",
+        "Carolina\u2014she mentioned to me, what, three months before he left, that he'd asked about the hospital's benef\u2026",
+        "I thanked her for telling me and then just... kept working."
+      ],
+      "thinking": "Block 5 promotes low\u2192mid: a concrete failure of vertical coherence \u2014 signal reached the top (Carolina\u2192owner) but no action loop closed. Algedonic existed informally; S3 control didn't.",
+      "next_question": "The probe is still pinned: the other dentist remaining\u2014partner, employee, or family\u2014and roughly how many patient families are you holding onto right now?",
+      "signal_mutations": [
+        {
+          "block": 5,
+          "new_resolution": "mid",
+          "quote": "Carolina was doing her job\u2014she was watching the team\u2014and I ignored her... There was no one whose job it was to notice. That was supposed to be me."
+        }
+      ]
+    },
+    {
+      "turn": 8,
+      "user": "*looks up with a flash of something\u2014maybe recognition, maybe resentment at the directness*\n\nHe's an employee. Good dentist, solid with kids, but he's not... *pauses* ...he's not invested the way I am. Can't blame him. He comes in, he does his work, he leaves. And I think he knows I can't pay him what he's worth right now, so there's this unspoken thing between us\u2014he's looking too, I can feel it. *rubs neck, voice drops* As for families... I honestly don't have exact numbers. We have maybe four hundred active patient records, but \"active\" is... *trails off, then corrects himself* ...maybe two hundred and fifty are coming regularly? Used to be more before the waits got bad. Some of them have gone quiet\u2014haven't called in months, probably found someone else. Some are still trying to book but they're frustrated. Sofia's mom... that was last week. There's probably five, six others like her from just the last month who asked about appointments and I couldn't fit them in. *voice flattens* I know their names. I know their kids' names. And I'm watching them drift away and I can't stop it because I'm one person and there's only so many hours in a day. That's what keeps me awake at night, more than the money actually. *looks away* Not the numbers. The faces.",
+      "signals": [
+        "He's an employee... not invested the way I am",
+        "he knows I can't pay him what he's worth... he's looking too",
+        "maybe two hundred and fifty are coming regularly"
+      ],
+      "thinking": "Block 6 sharpens to high \u2014 S1 capacity is one committed owner plus a disengaged employee who is himself a flight risk; Block 4 reframes \u2014 the algedonic is family attrition, not exhaustion or money.",
+      "next_question": "When a family goes quiet for months, does anyone in the clinic notice and reach out\u2014or do you only realize they're gone when you happen to think of them?",
+      "signal_mutations": [
+        {
+          "block": 6,
+          "new_resolution": "high",
+          "quote": "He's an employee... not invested the way I am... he's looking too, I can feel it"
+        },
+        {
+          "block": 6,
+          "new_resolution": "high",
+          "quote": "maybe two hundred and fifty are coming regularly"
+        },
+        {
+          "block": 4,
+          "new_resolution": "high",
+          "quote": "That's what keeps me awake at night, more than the money actually... Not the numbers. The faces."
+        }
+      ]
+    },
+    {
+      "turn": 9,
+      "user": "*stares at the question for a long moment, then laughs\u2014a short, hollow sound*\n\nNo. No one reaches out. *voice becomes flat* Carolina or one of the other admin staff, they *could*\u2014they have the records, they could see \"this family hasn't been in since October\"\u2014but there's no system for that. No one whose job it is to... *trails off, then continues quietly* ...to care that they're gone. And I know that sounds bad when I say it out loud, because I just told you about Sofia and her mother and how much those relationships matter, how that's what we actually *are*, and then I'm admitting that we just... let them disappear. *rubs face, voice becoming slightly bitter* When they go quiet, we only notice if they call back asking to book. Or if *I* happen to remember them\u2014which I do, too often, usually at three in the morning when I can't sleep. But that's not a business practice, that's just me lying awake feeling guilty. *looks up, exhaustion and something sharper in his eyes* We're so understaffed that everyone's just drowning in their own chair. No one has the bandwidth to notice who's missing. And that's... *pauses, the weight of it settling visibly* ...that's how you lose a relationship clinic. One quiet family at a time, while everyone's too tired to see it happening.",
+      "signals": [
+        "there's no system for that",
+        "No one whose job it is to... care that they're gone",
+        "we only notice if they call back asking to book"
+      ],
+      "thinking": "Block 5 promoted mid \u2192 high: explicit accountability gap and absent monitoring cadence now quote-backed across staff departures AND patient attrition.",
+      "next_question": "If you could assign one person\u2014not yourself\u2014to watch one signal weekly that would tell you a family is slipping away, who and what would it be?",
+      "signal_mutations": [
+        {
+          "block": 5,
+          "new_resolution": "high",
+          "quote": "there's no system for that. No one whose job it is to... care that they're gone"
+        }
+      ]
+    },
+    {
+      "turn": 10,
+      "user": "*sits very still for a moment, then leans forward slowly*\n\nCarolina. It has to be Carolina. She's the one who already tried to tell me about the dentist leaving\u2014she's the one who *sees* things. And the signal... *pauses, thinking* ...it's simple. Every week, she pulls the list of families who haven't booked in the last ninety days but used to come every six months. Just pulls it. Looks at it. And if any of them are there, she... I don't know, she sends them a message\u2014something real, not automated. \"Sofia's mom, we miss seeing Sofia, would love to get her back in.\" Something like that. *voice becomes quieter, almost reluctant* Because right now that list probably exists in the system and no one's looking at it, which means it might as well not exist. And Carolina's already proven she notices things I miss. She was watching the team. She *tried* to tell me. So if I give her that one job\u2014just that one signal, every week\u2014then maybe... *trails off, then finishes more firmly* ...then maybe I don't lose Sofia's mom to silence. And if I don't lose them, maybe I don't lose the whole reason I started this clinic in the first place. *looks at you* Does that work? Or am I just describing the obvious thing I should have done six months ago?",
+      "signals": [
+        "Carolina. It has to be Carolina",
+        "pulls the list of families who haven't booked in the last ninety days",
+        "something real, not automated"
+      ],
+      "thinking": "Block 3 moves from low to mid: \"back to normal\" gets a concrete operational shape\u2014Carolina, weekly, 90-day lapse list, personal outreach. The posture is still claw-back, but it now has a first observable signal.",
+      "next_question": "If Carolina pulls that list next Monday and three families are on it, what does she actually have authority to do without checking with you first?",
+      "signal_mutations": [
+        {
+          "block": 3,
+          "new_resolution": "mid",
+          "quote": "Every week, she pulls the list of families who haven't booked in the last ninety days... she sends them a message\u2014something real, not automated"
+        }
+      ]
+    }
+  ],
+  "snapshots": [
+    {
+      "1": {
+        "resolution": "low",
+        "quotes": [
+          "family dentistry clinic in Matosinhos\u2014been here, what, twelve years now"
+        ]
+      },
+      "2": {
+        "resolution": "empty",
+        "quotes": [
+          "The families know us. They trust us. That's... the thing I'm terrified of losing.",
+          "It's not about the teeth... it's the continuity. That's what they trust. That we know them.",
+          "we're a relationship clinic running on fumes"
+        ]
+      },
+      "3": {
+        "resolution": "empty",
+        "quotes": [
+          "I'd take anything that gets me back to normal\u2014back to sleeping... So yeah, claw back. For now.",
+          "Every week, she pulls the list of families who haven't booked in the last ninety days... she sends them a message\u2014something real, not automated"
+        ]
+      },
+      "4": {
+        "resolution": "mid",
+        "quotes": [
+          "Appointments are weeks out. Patients are angry. I'm tired.",
+          "back to sleeping, back to remembering my kids' names",
+          "I couldn't tell her no without feeling like I was betraying her. That's what the three-week wait breaks. Not the tooth. The relationship.",
+          "the next dentist\u2014if I ever find one\u2014will look at me drowning and decide the hospital's looking pretty good too",
+          "That's what keeps me awake at night, more than the money actually... Not the numbers. The faces."
+        ]
+      },
+      "5": {
+        "resolution": "empty",
+        "quotes": [
+          "If I'd seen it coming earlier and actually done something about it instead of just... hoping it wouldn't happen",
+          "Carolina was doing her job\u2014she was watching the team\u2014and I ignored her... There was no one whose job it was to notice. That was supposed to be me.",
+          "there's no system for that. No one whose job it is to... care that they're gone"
+        ]
+      },
+      "6": {
+        "resolution": "low",
+        "quotes": [
+          "just me and one other dentist trying to cover the load we used to split three ways",
+          "one person trying to be three",
+          "Three dentists was the shape that worked before, and my brain just keeps saying get back there",
+          "He's an employee... not invested the way I am... he's looking too, I can feel it",
+          "maybe two hundred and fifty are coming regularly"
+        ]
+      }
+    },
+    {
+      "1": {
+        "resolution": "low",
+        "quotes": [
+          "family dentistry clinic in Matosinhos\u2014been here, what, twelve years now"
+        ]
+      },
+      "2": {
+        "resolution": "low",
+        "quotes": [
+          "The families know us. They trust us. That's... the thing I'm terrified of losing.",
+          "It's not about the teeth... it's the continuity. That's what they trust. That we know them.",
+          "we're a relationship clinic running on fumes"
+        ]
+      },
+      "3": {
+        "resolution": "low",
+        "quotes": [
+          "I'd take anything that gets me back to normal\u2014back to sleeping... So yeah, claw back. For now.",
+          "Every week, she pulls the list of families who haven't booked in the last ninety days... she sends them a message\u2014something real, not automated"
+        ]
+      },
+      "4": {
+        "resolution": "high",
+        "quotes": [
+          "Appointments are weeks out. Patients are angry. I'm tired.",
+          "back to sleeping, back to remembering my kids' names",
+          "I couldn't tell her no without feeling like I was betraying her. That's what the three-week wait breaks. Not the tooth. The relationship.",
+          "the next dentist\u2014if I ever find one\u2014will look at me drowning and decide the hospital's looking pretty good too",
+          "That's what keeps me awake at night, more than the money actually... Not the numbers. The faces."
+        ]
+      },
+      "5": {
+        "resolution": "empty",
+        "quotes": [
+          "If I'd seen it coming earlier and actually done something about it instead of just... hoping it wouldn't happen",
+          "Carolina was doing her job\u2014she was watching the team\u2014and I ignored her... There was no one whose job it was to notice. That was supposed to be me.",
+          "there's no system for that. No one whose job it is to... care that they're gone"
+        ]
+      },
+      "6": {
+        "resolution": "low",
+        "quotes": [
+          "just me and one other dentist trying to cover the load we used to split three ways",
+          "one person trying to be three",
+          "Three dentists was the shape that worked before, and my brain just keeps saying get back there",
+          "He's an employee... not invested the way I am... he's looking too, I can feel it",
+          "maybe two hundred and fifty are coming regularly"
+        ]
+      }
+    },
+    {
+      "1": {
+        "resolution": "low",
+        "quotes": [
+          "family dentistry clinic in Matosinhos\u2014been here, what, twelve years now"
+        ]
+      },
+      "2": {
+        "resolution": "high",
+        "quotes": [
+          "The families know us. They trust us. That's... the thing I'm terrified of losing.",
+          "It's not about the teeth... it's the continuity. That's what they trust. That we know them.",
+          "we're a relationship clinic running on fumes"
+        ]
+      },
+      "3": {
+        "resolution": "low",
+        "quotes": [
+          "I'd take anything that gets me back to normal\u2014back to sleeping... So yeah, claw back. For now.",
+          "Every week, she pulls the list of families who haven't booked in the last ninety days... she sends them a message\u2014something real, not automated"
+        ]
+      },
+      "4": {
+        "resolution": "high",
+        "quotes": [
+          "Appointments are weeks out. Patients are angry. I'm tired.",
+          "back to sleeping, back to remembering my kids' names",
+          "I couldn't tell her no without feeling like I was betraying her. That's what the three-week wait breaks. Not the tooth. The relationship.",
+          "the next dentist\u2014if I ever find one\u2014will look at me drowning and decide the hospital's looking pretty good too",
+          "That's what keeps me awake at night, more than the money actually... Not the numbers. The faces."
+        ]
+      },
+      "5": {
+        "resolution": "empty",
+        "quotes": [
+          "If I'd seen it coming earlier and actually done something about it instead of just... hoping it wouldn't happen",
+          "Carolina was doing her job\u2014she was watching the team\u2014and I ignored her... There was no one whose job it was to notice. That was supposed to be me.",
+          "there's no system for that. No one whose job it is to... care that they're gone"
+        ]
+      },
+      "6": {
+        "resolution": "low",
+        "quotes": [
+          "just me and one other dentist trying to cover the load we used to split three ways",
+          "one person trying to be three",
+          "Three dentists was the shape that worked before, and my brain just keeps saying get back there",
+          "He's an employee... not invested the way I am... he's looking too, I can feel it",
+          "maybe two hundred and fifty are coming regularly"
+        ]
+      }
+    },
+    {
+      "1": {
+        "resolution": "low",
+        "quotes": [
+          "family dentistry clinic in Matosinhos\u2014been here, what, twelve years now"
+        ]
+      },
+      "2": {
+        "resolution": "high",
+        "quotes": [
+          "The families know us. They trust us. That's... the thing I'm terrified of losing.",
+          "It's not about the teeth... it's the continuity. That's what they trust. That we know them.",
+          "we're a relationship clinic running on fumes"
+        ]
+      },
+      "3": {
+        "resolution": "low",
+        "quotes": [
+          "I'd take anything that gets me back to normal\u2014back to sleeping... So yeah, claw back. For now.",
+          "Every week, she pulls the list of families who haven't booked in the last ninety days... she sends them a message\u2014something real, not automated"
+        ]
+      },
+      "4": {
+        "resolution": "high",
+        "quotes": [
+          "Appointments are weeks out. Patients are angry. I'm tired.",
+          "back to sleeping, back to remembering my kids' names",
+          "I couldn't tell her no without feeling like I was betraying her. That's what the three-week wait breaks. Not the tooth. The relationship.",
+          "the next dentist\u2014if I ever find one\u2014will look at me drowning and decide the hospital's looking pretty good too",
+          "That's what keeps me awake at night, more than the money actually... Not the numbers. The faces."
+        ]
+      },
+      "5": {
+        "resolution": "empty",
+        "quotes": [
+          "If I'd seen it coming earlier and actually done something about it instead of just... hoping it wouldn't happen",
+          "Carolina was doing her job\u2014she was watching the team\u2014and I ignored her... There was no one whose job it was to notice. That was supposed to be me.",
+          "there's no system for that. No one whose job it is to... care that they're gone"
+        ]
+      },
+      "6": {
+        "resolution": "mid",
+        "quotes": [
+          "just me and one other dentist trying to cover the load we used to split three ways",
+          "one person trying to be three",
+          "Three dentists was the shape that worked before, and my brain just keeps saying get back there",
+          "He's an employee... not invested the way I am... he's looking too, I can feel it",
+          "maybe two hundred and fifty are coming regularly"
+        ]
+      }
+    },
+    {
+      "1": {
+        "resolution": "low",
+        "quotes": [
+          "family dentistry clinic in Matosinhos\u2014been here, what, twelve years now"
+        ]
+      },
+      "2": {
+        "resolution": "high",
+        "quotes": [
+          "The families know us. They trust us. That's... the thing I'm terrified of losing.",
+          "It's not about the teeth... it's the continuity. That's what they trust. That we know them.",
+          "we're a relationship clinic running on fumes"
+        ]
+      },
+      "3": {
+        "resolution": "low",
+        "quotes": [
+          "I'd take anything that gets me back to normal\u2014back to sleeping... So yeah, claw back. For now.",
+          "Every week, she pulls the list of families who haven't booked in the last ninety days... she sends them a message\u2014something real, not automated"
+        ]
+      },
+      "4": {
+        "resolution": "high",
+        "quotes": [
+          "Appointments are weeks out. Patients are angry. I'm tired.",
+          "back to sleeping, back to remembering my kids' names",
+          "I couldn't tell her no without feeling like I was betraying her. That's what the three-week wait breaks. Not the tooth. The relationship.",
+          "the next dentist\u2014if I ever find one\u2014will look at me drowning and decide the hospital's looking pretty good too",
+          "That's what keeps me awake at night, more than the money actually... Not the numbers. The faces."
+        ]
+      },
+      "5": {
+        "resolution": "empty",
+        "quotes": [
+          "If I'd seen it coming earlier and actually done something about it instead of just... hoping it wouldn't happen",
+          "Carolina was doing her job\u2014she was watching the team\u2014and I ignored her... There was no one whose job it was to notice. That was supposed to be me.",
+          "there's no system for that. No one whose job it is to... care that they're gone"
+        ]
+      },
+      "6": {
+        "resolution": "mid",
+        "quotes": [
+          "just me and one other dentist trying to cover the load we used to split three ways",
+          "one person trying to be three",
+          "Three dentists was the shape that worked before, and my brain just keeps saying get back there",
+          "He's an employee... not invested the way I am... he's looking too, I can feel it",
+          "maybe two hundred and fifty are coming regularly"
+        ]
+      }
+    },
+    {
+      "1": {
+        "resolution": "low",
+        "quotes": [
+          "family dentistry clinic in Matosinhos\u2014been here, what, twelve years now"
+        ]
+      },
+      "2": {
+        "resolution": "high",
+        "quotes": [
+          "The families know us. They trust us. That's... the thing I'm terrified of losing.",
+          "It's not about the teeth... it's the continuity. That's what they trust. That we know them.",
+          "we're a relationship clinic running on fumes"
+        ]
+      },
+      "3": {
+        "resolution": "low",
+        "quotes": [
+          "I'd take anything that gets me back to normal\u2014back to sleeping... So yeah, claw back. For now.",
+          "Every week, she pulls the list of families who haven't booked in the last ninety days... she sends them a message\u2014something real, not automated"
+        ]
+      },
+      "4": {
+        "resolution": "high",
+        "quotes": [
+          "Appointments are weeks out. Patients are angry. I'm tired.",
+          "back to sleeping, back to remembering my kids' names",
+          "I couldn't tell her no without feeling like I was betraying her. That's what the three-week wait breaks. Not the tooth. The relationship.",
+          "the next dentist\u2014if I ever find one\u2014will look at me drowning and decide the hospital's looking pretty good too",
+          "That's what keeps me awake at night, more than the money actually... Not the numbers. The faces."
+        ]
+      },
+      "5": {
+        "resolution": "low",
+        "quotes": [
+          "If I'd seen it coming earlier and actually done something about it instead of just... hoping it wouldn't happen",
+          "Carolina was doing her job\u2014she was watching the team\u2014and I ignored her... There was no one whose job it was to notice. That was supposed to be me.",
+          "there's no system for that. No one whose job it is to... care that they're gone"
+        ]
+      },
+      "6": {
+        "resolution": "mid",
+        "quotes": [
+          "just me and one other dentist trying to cover the load we used to split three ways",
+          "one person trying to be three",
+          "Three dentists was the shape that worked before, and my brain just keeps saying get back there",
+          "He's an employee... not invested the way I am... he's looking too, I can feel it",
+          "maybe two hundred and fifty are coming regularly"
+        ]
+      }
+    },
+    {
+      "1": {
+        "resolution": "low",
+        "quotes": [
+          "family dentistry clinic in Matosinhos\u2014been here, what, twelve years now"
+        ]
+      },
+      "2": {
+        "resolution": "high",
+        "quotes": [
+          "The families know us. They trust us. That's... the thing I'm terrified of losing.",
+          "It's not about the teeth... it's the continuity. That's what they trust. That we know them.",
+          "we're a relationship clinic running on fumes"
+        ]
+      },
+      "3": {
+        "resolution": "low",
+        "quotes": [
+          "I'd take anything that gets me back to normal\u2014back to sleeping... So yeah, claw back. For now.",
+          "Every week, she pulls the list of families who haven't booked in the last ninety days... she sends them a message\u2014something real, not automated"
+        ]
+      },
+      "4": {
+        "resolution": "high",
+        "quotes": [
+          "Appointments are weeks out. Patients are angry. I'm tired.",
+          "back to sleeping, back to remembering my kids' names",
+          "I couldn't tell her no without feeling like I was betraying her. That's what the three-week wait breaks. Not the tooth. The relationship.",
+          "the next dentist\u2014if I ever find one\u2014will look at me drowning and decide the hospital's looking pretty good too",
+          "That's what keeps me awake at night, more than the money actually... Not the numbers. The faces."
+        ]
+      },
+      "5": {
+        "resolution": "mid",
+        "quotes": [
+          "If I'd seen it coming earlier and actually done something about it instead of just... hoping it wouldn't happen",
+          "Carolina was doing her job\u2014she was watching the team\u2014and I ignored her... There was no one whose job it was to notice. That was supposed to be me.",
+          "there's no system for that. No one whose job it is to... care that they're gone"
+        ]
+      },
+      "6": {
+        "resolution": "mid",
+        "quotes": [
+          "just me and one other dentist trying to cover the load we used to split three ways",
+          "one person trying to be three",
+          "Three dentists was the shape that worked before, and my brain just keeps saying get back there",
+          "He's an employee... not invested the way I am... he's looking too, I can feel it",
+          "maybe two hundred and fifty are coming regularly"
+        ]
+      }
+    },
+    {
+      "1": {
+        "resolution": "low",
+        "quotes": [
+          "family dentistry clinic in Matosinhos\u2014been here, what, twelve years now"
+        ]
+      },
+      "2": {
+        "resolution": "high",
+        "quotes": [
+          "The families know us. They trust us. That's... the thing I'm terrified of losing.",
+          "It's not about the teeth... it's the continuity. That's what they trust. That we know them.",
+          "we're a relationship clinic running on fumes"
+        ]
+      },
+      "3": {
+        "resolution": "low",
+        "quotes": [
+          "I'd take anything that gets me back to normal\u2014back to sleeping... So yeah, claw back. For now.",
+          "Every week, she pulls the list of families who haven't booked in the last ninety days... she sends them a message\u2014something real, not automated"
+        ]
+      },
+      "4": {
+        "resolution": "high",
+        "quotes": [
+          "Appointments are weeks out. Patients are angry. I'm tired.",
+          "back to sleeping, back to remembering my kids' names",
+          "I couldn't tell her no without feeling like I was betraying her. That's what the three-week wait breaks. Not the tooth. The relationship.",
+          "the next dentist\u2014if I ever find one\u2014will look at me drowning and decide the hospital's looking pretty good too",
+          "That's what keeps me awake at night, more than the money actually... Not the numbers. The faces."
+        ]
+      },
+      "5": {
+        "resolution": "mid",
+        "quotes": [
+          "If I'd seen it coming earlier and actually done something about it instead of just... hoping it wouldn't happen",
+          "Carolina was doing her job\u2014she was watching the team\u2014and I ignored her... There was no one whose job it was to notice. That was supposed to be me.",
+          "there's no system for that. No one whose job it is to... care that they're gone"
+        ]
+      },
+      "6": {
+        "resolution": "high",
+        "quotes": [
+          "just me and one other dentist trying to cover the load we used to split three ways",
+          "one person trying to be three",
+          "Three dentists was the shape that worked before, and my brain just keeps saying get back there",
+          "He's an employee... not invested the way I am... he's looking too, I can feel it",
+          "maybe two hundred and fifty are coming regularly"
+        ]
+      }
+    },
+    {
+      "1": {
+        "resolution": "low",
+        "quotes": [
+          "family dentistry clinic in Matosinhos\u2014been here, what, twelve years now"
+        ]
+      },
+      "2": {
+        "resolution": "high",
+        "quotes": [
+          "The families know us. They trust us. That's... the thing I'm terrified of losing.",
+          "It's not about the teeth... it's the continuity. That's what they trust. That we know them.",
+          "we're a relationship clinic running on fumes"
+        ]
+      },
+      "3": {
+        "resolution": "low",
+        "quotes": [
+          "I'd take anything that gets me back to normal\u2014back to sleeping... So yeah, claw back. For now.",
+          "Every week, she pulls the list of families who haven't booked in the last ninety days... she sends them a message\u2014something real, not automated"
+        ]
+      },
+      "4": {
+        "resolution": "high",
+        "quotes": [
+          "Appointments are weeks out. Patients are angry. I'm tired.",
+          "back to sleeping, back to remembering my kids' names",
+          "I couldn't tell her no without feeling like I was betraying her. That's what the three-week wait breaks. Not the tooth. The relationship.",
+          "the next dentist\u2014if I ever find one\u2014will look at me drowning and decide the hospital's looking pretty good too",
+          "That's what keeps me awake at night, more than the money actually... Not the numbers. The faces."
+        ]
+      },
+      "5": {
+        "resolution": "high",
+        "quotes": [
+          "If I'd seen it coming earlier and actually done something about it instead of just... hoping it wouldn't happen",
+          "Carolina was doing her job\u2014she was watching the team\u2014and I ignored her... There was no one whose job it was to notice. That was supposed to be me.",
+          "there's no system for that. No one whose job it is to... care that they're gone"
+        ]
+      },
+      "6": {
+        "resolution": "high",
+        "quotes": [
+          "just me and one other dentist trying to cover the load we used to split three ways",
+          "one person trying to be three",
+          "Three dentists was the shape that worked before, and my brain just keeps saying get back there",
+          "He's an employee... not invested the way I am... he's looking too, I can feel it",
+          "maybe two hundred and fifty are coming regularly"
+        ]
+      }
+    },
+    {
+      "1": {
+        "resolution": "low",
+        "quotes": [
+          "family dentistry clinic in Matosinhos\u2014been here, what, twelve years now"
+        ]
+      },
+      "2": {
+        "resolution": "high",
+        "quotes": [
+          "The families know us. They trust us. That's... the thing I'm terrified of losing.",
+          "It's not about the teeth... it's the continuity. That's what they trust. That we know them.",
+          "we're a relationship clinic running on fumes"
+        ]
+      },
+      "3": {
+        "resolution": "mid",
+        "quotes": [
+          "I'd take anything that gets me back to normal\u2014back to sleeping... So yeah, claw back. For now.",
+          "Every week, she pulls the list of families who haven't booked in the last ninety days... she sends them a message\u2014something real, not automated"
+        ]
+      },
+      "4": {
+        "resolution": "high",
+        "quotes": [
+          "Appointments are weeks out. Patients are angry. I'm tired.",
+          "back to sleeping, back to remembering my kids' names",
+          "I couldn't tell her no without feeling like I was betraying her. That's what the three-week wait breaks. Not the tooth. The relationship.",
+          "the next dentist\u2014if I ever find one\u2014will look at me drowning and decide the hospital's looking pretty good too",
+          "That's what keeps me awake at night, more than the money actually... Not the numbers. The faces."
+        ]
+      },
+      "5": {
+        "resolution": "high",
+        "quotes": [
+          "If I'd seen it coming earlier and actually done something about it instead of just... hoping it wouldn't happen",
+          "Carolina was doing her job\u2014she was watching the team\u2014and I ignored her... There was no one whose job it was to notice. That was supposed to be me.",
+          "there's no system for that. No one whose job it is to... care that they're gone"
+        ]
+      },
+      "6": {
+        "resolution": "high",
+        "quotes": [
+          "just me and one other dentist trying to cover the load we used to split three ways",
+          "one person trying to be three",
+          "Three dentists was the shape that worked before, and my brain just keeps saying get back there",
+          "He's an employee... not invested the way I am... he's looking too, I can feel it",
+          "maybe two hundred and fifty are coming regularly"
+        ]
+      }
+    }
+  ],
+  "promotions": [
+    [
+      {
+        "block": 4,
+        "from": "empty",
+        "to": "mid",
+        "delta_rank": 2,
+        "quote": "Appointments are weeks out. Patients are angry. I'm tired."
+      },
+      {
+        "block": 6,
+        "from": "empty",
+        "to": "low",
+        "delta_rank": 1,
+        "quote": "just me and one other dentist trying to cover the load we used to split three ways"
+      },
+      {
+        "block": 1,
+        "from": "empty",
+        "to": "low",
+        "delta_rank": 1,
+        "quote": "family dentistry clinic in Matosinhos\u2014been here, what, twelve years now"
+      }
+    ],
+    [
+      {
+        "block": 4,
+        "from": "mid",
+        "to": "high",
+        "delta_rank": 1,
+        "quote": "back to sleeping, back to remembering my kids' names"
+      },
+      {
+        "block": 2,
+        "from": "empty",
+        "to": "low",
+        "delta_rank": 1,
+        "quote": "The families know us. They trust us. That's... the thing I'm terrified of losing."
+      },
+      {
+        "block": 3,
+        "from": "empty",
+        "to": "low",
+        "delta_rank": 1,
+        "quote": "I'd take anything that gets me back to normal\u2014back to sleeping... So yeah, claw back. For now."
+      }
+    ],
+    [
+      {
+        "block": 2,
+        "from": "low",
+        "to": "high",
+        "delta_rank": 2,
+        "quote": "It's not about the teeth... it's the continuity. That's what they trust. That we know them."
+      }
+    ],
+    [
+      {
+        "block": 6,
+        "from": "low",
+        "to": "mid",
+        "delta_rank": 1,
+        "quote": "one person trying to be three"
+      }
+    ],
+    [],
+    [
+      {
+        "block": 5,
+        "from": "empty",
+        "to": "low",
+        "delta_rank": 1,
+        "quote": "If I'd seen it coming earlier and actually done something about it instead of just... hoping it wouldn't happen"
+      }
+    ],
+    [
+      {
+        "block": 5,
+        "from": "low",
+        "to": "mid",
+        "delta_rank": 1,
+        "quote": "Carolina was doing her job\u2014she was watching the team\u2014and I ignored her... There was no one whose job it was to notice. That was supposed to be me."
+      }
+    ],
+    [
+      {
+        "block": 6,
+        "from": "mid",
+        "to": "high",
+        "delta_rank": 1,
+        "quote": "He's an employee... not invested the way I am... he's looking too, I can feel it"
+      }
+    ],
+    [
+      {
+        "block": 5,
+        "from": "mid",
+        "to": "high",
+        "delta_rank": 1,
+        "quote": "there's no system for that. No one whose job it is to... care that they're gone"
+      }
+    ],
+    [
+      {
+        "block": 3,
+        "from": "low",
+        "to": "mid",
+        "delta_rank": 1,
+        "quote": "Every week, she pulls the list of families who haven't booked in the last ninety days... she sends them a message\u2014something real, not automated"
+      }
+    ]
+  ],
+  "costs": {
+    "1": {
+      "ts": "2026-04-25T09:04:27.576068",
+      "session_id": "dental-clinic",
+      "turn": 1,
+      "wall_s": 75.875,
+      "input_tokens": 1082,
+      "cache_read_tokens": 4532,
+      "cache_create_tokens": 0,
+      "output_tokens": 491,
+      "cost_usd": 0.059853
+    },
+    "2": {
+      "ts": "2026-04-25T09:05:34.512837",
+      "session_id": "dental-clinic",
+      "turn": 2,
+      "wall_s": 62.593,
+      "input_tokens": 1157,
+      "cache_read_tokens": 4532,
+      "cache_create_tokens": 0,
+      "output_tokens": 544,
+      "cost_usd": 0.064953
+    },
+    "3": {
+      "ts": "2026-04-25T09:06:05.437719",
+      "session_id": "dental-clinic",
+      "turn": 3,
+      "wall_s": 26.447,
+      "input_tokens": 1287,
+      "cache_read_tokens": 4532,
+      "cache_create_tokens": 0,
+      "output_tokens": 447,
+      "cost_usd": 0.059628
+    },
+    "4": {
+      "ts": "2026-04-25T09:08:16.222411",
+      "session_id": "dental-clinic",
+      "turn": 4,
+      "wall_s": 126.2,
+      "input_tokens": 1307,
+      "cache_read_tokens": 4532,
+      "cache_create_tokens": 0,
+      "output_tokens": 380,
+      "cost_usd": 0.054903
+    },
+    "5": {
+      "ts": "2026-04-25T09:09:19.801367",
+      "session_id": "dental-clinic",
+      "turn": 5,
+      "wall_s": 59.781,
+      "input_tokens": 1270,
+      "cache_read_tokens": 4532,
+      "cache_create_tokens": 0,
+      "output_tokens": 408,
+      "cost_usd": 0.056448
+    },
+    "6": {
+      "ts": "2026-04-25T09:09:57.812471",
+      "session_id": "dental-clinic",
+      "turn": 6,
+      "wall_s": 33.467,
+      "input_tokens": 1409,
+      "cache_read_tokens": 4532,
+      "cache_create_tokens": 0,
+      "output_tokens": 509,
+      "cost_usd": 0.066108
+    },
+    "7": {
+      "ts": "2026-04-25T09:11:55.066373",
+      "session_id": "dental-clinic",
+      "turn": 7,
+      "wall_s": 112.406,
+      "input_tokens": 1412,
+      "cache_read_tokens": 4532,
+      "cache_create_tokens": 0,
+      "output_tokens": 444,
+      "cost_usd": 0.061278
+    },
+    "8": {
+      "ts": "2026-04-25T09:13:17.081479",
+      "session_id": "dental-clinic",
+      "turn": 8,
+      "wall_s": 76.752,
+      "input_tokens": 1473,
+      "cache_read_tokens": 4532,
+      "cache_create_tokens": 0,
+      "output_tokens": 550,
+      "cost_usd": 0.070143
+    },
+    "9": {
+      "ts": "2026-04-25T09:14:13.441110",
+      "session_id": "dental-clinic",
+      "turn": 9,
+      "wall_s": 49.728,
+      "input_tokens": 1461,
+      "cache_read_tokens": 4532,
+      "cache_create_tokens": 0,
+      "output_tokens": 411,
+      "cost_usd": 0.059538
+    },
+    "10": {
+      "ts": "2026-04-25T09:14:47.770408",
+      "session_id": "dental-clinic",
+      "turn": 10,
+      "wall_s": 29.41,
+      "input_tokens": 1457,
+      "cache_read_tokens": 4532,
+      "cache_create_tokens": 0,
+      "output_tokens": 451,
+      "cost_usd": 0.062478
+    }
+  },
+  "goal_blocks": [
+    4,
+    2,
+    6,
+    null,
+    5,
+    5,
+    6,
+    5,
+    3,
+    null
+  ],
+  "algedonic": [
+    "mid",
+    "high",
+    "high",
+    "high",
+    "high",
+    "high",
+    "high",
+    "high",
+    "high",
+    "high"
+  ],
+  "block_names": {
+    "1": "Market",
+    "2": "Purpose",
+    "3": "Change",
+    "4": "Algedonic",
+    "5": "Coherence",
+    "6": "Operations"
+  },
+  "block_full": {
+    "1": "who do they serve",
+    "2": "what they actually sell",
+    "3": "survive / grow / pivot",
+    "4": "what's hurting",
+    "5": "accountability flow",
+    "6": "capacity & shape"
+  },
+  "block_icons": {
+    "1": "\ud83c\udfaf",
+    "2": "\ud83e\udded",
+    "3": "\u26a1",
+    "4": "\ud83d\udca2",
+    "5": "\ud83e\ude9c",
+    "6": "\u2699\ufe0f"
+  }
+}

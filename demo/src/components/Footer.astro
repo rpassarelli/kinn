@@ -1,0 +1,68 @@
+---
+---
+<footer>
+  <div class="controls">
+    <button class="btn demo" id="btn-demo">▶ Run demo</button>
+    <button class="btn" id="btn-prev">◀</button>
+    <button class="btn primary" id="btn-next">Step ▶</button>
+    <button class="btn" id="btn-reset">↺</button>
+  </div>
+  <div class="progress" id="progress"></div>
+  <div class="metrics">
+    <span>turn <b id="turn-num">0</b>/<span id="turn-total">0</span></span>
+    <span>cost <b id="cost">$0.000</b></span>
+    <span>cache hit <b id="cache">0</b>%</span>
+    <span>blocks <b id="cov">0</b>/6</span>
+  </div>
+</footer>
+
+<style>
+  footer {
+    padding: 12px 24px;
+    border-top: 1px solid var(--border);
+    background: var(--panel);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    font-family: ui-monospace, monospace;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .controls { display: flex; gap: 12px; align-items: center; }
+  .btn {
+    background: var(--panel-2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 10px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+  .btn:hover:not(:disabled) { background: var(--border); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn.primary { background: var(--user); color: var(--bg); border-color: var(--user); }
+  .btn.demo {
+    background: var(--gold);
+    color: #1a1500;
+    border-color: var(--gold);
+    font-weight: 800;
+  }
+  .metrics { display: flex; gap: 18px; color: var(--text-dim); white-space: nowrap; flex-shrink: 0; }
+  .metrics b { color: var(--text); margin-left: 6px; }
+  .metrics span { white-space: nowrap; }
+  .progress { display: flex; gap: 5px; flex: 1; max-width: 320px; margin: 0 18px; }
+  .progress :global(.dot) {
+    flex: 1;
+    height: 9px;
+    background: var(--empty);
+    border-radius: 5px;
+    transition: background 0.3s;
+  }
+  .progress :global(.dot.done) { background: var(--mid); }
+  .progress :global(.dot.current) { background: var(--gold); }
+</style>

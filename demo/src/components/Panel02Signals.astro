@@ -1,0 +1,49 @@
+---
+import { PANEL_ICONS } from "../scripts/icons";
+---
+<section class="panel" id="panel-02">
+  <div class="panel-tag">02</div>
+  <div class="panel-title">
+    <span class="panel-icon" set:html={PANEL_ICONS.signal} />
+    Signals · what kinn3 heard
+  </div>
+  <ul class="signals-list" id="signals-list">
+    <li class="signals-empty">— waiting for input —</li>
+  </ul>
+</section>
+
+<style is:global>
+  .signals-list {
+    list-style: none;
+    padding: 0;
+    margin: 8px 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .signals-list li {
+    font-size: 24px;
+    line-height: 1.4;
+    padding: 14px 18px 14px 36px;
+    background: rgba(88, 166, 255, 0.08);
+    border-left: 3px solid var(--signal);
+    border-radius: 6px;
+    position: relative;
+    opacity: 0;
+  }
+  .signals-list li::before {
+    content: "›";
+    position: absolute;
+    left: 14px;
+    top: 10px;
+    color: var(--signal);
+    font-weight: 700;
+    font-size: 24px;
+  }
+  .signals-empty {
+    color: var(--text-muted);
+    font-style: italic;
+    font-size: 22px;
+    padding: 12px 0;
+  }
+</style>

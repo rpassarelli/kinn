@@ -1,0 +1,107 @@
+---
+import "../styles/global.css";
+import Header from "../components/Header.astro";
+import Panel01Phone from "../components/Panel01Phone.astro";
+import Panel02Signals from "../components/Panel02Signals.astro";
+import Panel03VSM from "../components/Panel03VSM.astro";
+import Panel04Router from "../components/Panel04Router.astro";
+import Panel05Questioner from "../components/Panel05Questioner.astro";
+import ArrowLayer from "../components/ArrowLayer.astro";
+import Footer from "../components/Footer.astro";
+import sessionData from "../data/session.json";
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1440" />
+  <title>kinn3 — diagnostic interview demo</title>
+</head>
+<body>
+  <Header />
+  <main>
+    <Panel01Phone />
+    <Panel02Signals />
+    <Panel03VSM />
+    <Panel04Router />
+    <Panel05Questioner />
+    <ArrowLayer />
+  </main>
+  <Footer />
+
+  <script is:inline define:vars={{ sessionData }}>
+    window.__SESSION_DATA__ = sessionData;
+  </script>
+  <script>
+    import { startDemo } from "../scripts/animation.ts";
+    startDemo(window.__SESSION_DATA__);
+  </script>
+</body>
+</html>
+
+<style is:global>
+  main {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr 2fr;
+    grid-template-rows: 1fr 1fr;
+    grid-template-areas:
+      "p1 p2 p3"
+      "p5 p5 p4";
+    gap: 8px;
+    padding: 8px;
+    background: var(--bg);
+    overflow: hidden;
+    position: relative;
+  }
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+  .panel-tag {
+    position: absolute;
+    top: 12px;
+    right: 20px;
+    font-family: ui-monospace, monospace;
+    font-size: 114px;
+    font-weight: 800;
+    color: var(--text-muted);
+    opacity: 0.15;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    pointer-events: none;
+  }
+  .panel-title {
+    font-size: 26px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--text-dim);
+    margin-bottom: 16px;
+    font-family: ui-monospace, monospace;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .panel-icon {
+    width: 32px;
+    height: 32px;
+    color: var(--text-dim);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .panel-icon svg { width: 100%; height: 100%; display: block; }
+  #panel-01 { grid-area: p1; }
+  #panel-02 { grid-area: p2; }
+  #panel-03 { grid-area: p3; }
+  #panel-04 { grid-area: p4; }
+  #panel-05 { grid-area: p5; }
+</style>

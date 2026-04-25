@@ -1,0 +1,191 @@
+---
+import { PANEL_ICONS } from "../scripts/icons";
+---
+<section class="panel" id="panel-01">
+  <div class="panel-tag">01</div>
+  <div class="panel-title">
+    <span class="panel-icon" set:html={PANEL_ICONS.chat} />
+    Stakeholder · live chat
+  </div>
+  <div class="phone-frame-wrap">
+    <div class="phone-frame">
+      <div class="phone-status">
+        <span class="status-time">9:41</span>
+        <span class="status-icons">
+          <span class="status-dot"></span><span class="status-dot"></span><span class="status-dot"></span>
+        </span>
+      </div>
+      <div class="kinn3-app-bar">
+        <span class="kinn3-avatar">k</span>
+        <div class="kinn3-app-meta">
+          <div class="kinn3-app-name">Kinn3</div>
+          <div class="kinn3-app-sub">
+            <span class="online-dot"></span>diagnostic interview
+          </div>
+        </div>
+      </div>
+      <div class="phone-screen" id="phone-screen"></div>
+      <div class="phone-input">
+        <div class="phone-input-field">type a reply…</div>
+        <button class="phone-input-send" aria-label="send">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 12L21 3l-4 9 4 9z"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style is:global>
+  /* Phone container fills the available panel space, then a real-phone aspect
+     ratio (9:19.5) sizes the actual frame inside it. */
+  #panel-01 .phone-frame-wrap {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 0 2px;
+  }
+  .phone-frame {
+    aspect-ratio: 11 / 16;
+    height: 100%;
+    max-width: 100%;
+    background: #1a1d24;
+    border: 8px solid #0a0d12;
+    border-radius: 32px;
+    box-shadow: 0 0 0 2px #2a3142, 0 8px 30px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+  }
+  .phone-frame::before {
+    content: "";
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 56px;
+    height: 16px;
+    background: #0a0d12;
+    border-radius: 10px;
+    z-index: 3;
+  }
+
+  /* Status bar (time + signal dots) */
+  .phone-status {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px 4px;
+    font-size: 11px;
+    color: var(--text-dim);
+    font-family: ui-monospace, monospace;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .status-time { font-variant-numeric: tabular-nums; }
+  .status-icons { display: inline-flex; gap: 2px; }
+  .status-dot {
+    width: 4px; height: 4px; border-radius: 50%;
+    background: var(--text-dim);
+  }
+
+  /* Kinn3-branded app bar */
+  .kinn3-app-bar {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 8px 12px 10px;
+    border-bottom: 1px solid #2a3142;
+    background: linear-gradient(180deg, rgba(255,211,61,0.06), rgba(0,0,0,0));
+    flex-shrink: 0;
+  }
+  .kinn3-avatar {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold), #c89800);
+    color: #1a1500;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800;
+    font-size: 16px;
+    font-family: -apple-system, "Inter", sans-serif;
+    flex-shrink: 0;
+  }
+  .kinn3-app-meta { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .kinn3-app-name { font-size: 13px; font-weight: 700; color: var(--text); line-height: 1; }
+  .kinn3-app-sub {
+    font-size: 10px; color: var(--text-dim);
+    font-family: ui-monospace, monospace;
+    display: inline-flex; align-items: center; gap: 5px;
+  }
+  .online-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--high);
+    box-shadow: 0 0 6px rgba(63,185,80,0.7);
+  }
+
+  .phone-screen {
+    flex: 1;
+    padding: 12px 12px 12px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    scroll-behavior: smooth;
+    min-height: 0;
+  }
+
+  /* Faux input field */
+  .phone-input {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px 10px;
+    border-top: 1px solid #2a3142;
+    background: #14181f;
+    flex-shrink: 0;
+  }
+  .phone-input-field {
+    flex: 1;
+    background: #2a3142;
+    color: var(--text-muted);
+    border-radius: 16px;
+    padding: 7px 14px;
+    font-size: 12px;
+    font-style: italic;
+  }
+  .phone-input-send {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--high);
+    color: #06121f;
+    border: none;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .phone-input-send svg { width: 16px; height: 16px; }
+  .phone-screen::-webkit-scrollbar { width: 0; }
+  .bubble {
+    max-width: 90%;
+    padding: 12px 14px;
+    border-radius: 16px;
+    font-size: 16px;
+    line-height: 1.42;
+    opacity: 0;
+    word-wrap: break-word;
+  }
+  .bubble.user {
+    background: var(--user);
+    color: #06121f;
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+  }
+  .bubble.agent {
+    background: #2a3142;
+    color: var(--text);
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+  }
+</style>

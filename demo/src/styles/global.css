@@ -1,0 +1,41 @@
+:root {
+  --bg: #0a0d12;
+  --panel: #141821;
+  --panel-2: #1c2230;
+  --border: #2a3142;
+  --text: #f0f6fc;
+  --text-dim: #8b96aa;
+  --text-muted: #5d6679;
+  --user: #58a6ff;
+  --agent: #d2a8ff;
+  --gold: #ffd33d;
+  --empty: #2a3142;
+  --low: #d29922;
+  --mid: #58a6ff;
+  --high: #3fb950;
+  --signal: #58a6ff;
+  --route: #ffd33d;
+  --goal: #d2a8ff;
+  --quest: #3fb950;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif;
+  height: 100%;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+body { display: flex; flex-direction: column; }
+
+button { font-family: inherit; }
+
+/* Pill / status colors used in multiple panels */
+.pill-empty { background: var(--empty); color: var(--text-muted); }
+.pill-low   { background: rgba(210,153,34,0.25); color: var(--low); }
+.pill-mid   { background: rgba(88,166,255,0.25); color: var(--mid); }
+.pill-high  { background: rgba(63,185,80,0.28); color: var(--high); }

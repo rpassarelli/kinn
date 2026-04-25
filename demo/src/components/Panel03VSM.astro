@@ -1,0 +1,79 @@
+---
+import { PANEL_ICONS } from "../scripts/icons";
+---
+<section class="panel" id="panel-03">
+  <div class="panel-tag">03</div>
+  <div class="panel-title">
+    <span class="panel-icon" set:html={PANEL_ICONS.grid} />
+    VSM model · 6 cybernetic dimensions
+  </div>
+  <div class="vsm-grid" id="vsm-blocks"></div>
+</section>
+
+<style is:global>
+  .vsm-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-auto-rows: 1fr;
+    gap: 10px;
+    flex: 1;
+    min-height: 0;
+  }
+  .vsm-block {
+    background: var(--panel-2);
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    padding: 12px 16px;
+    transition: border-color 0.4s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    position: relative;
+    overflow: hidden;
+    min-height: 0;
+  }
+  .vsm-block .top { display: flex; align-items: center; gap: 12px; }
+  .vsm-block .icon {
+    width: 32px;
+    height: 32px;
+    color: var(--text-dim);
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .vsm-block .icon svg { width: 100%; height: 100%; display: block; }
+  .vsm-block .name { font-size: 20px; font-weight: 700; line-height: 1.15; }
+  .vsm-block .sub { font-size: 14px; color: var(--text-muted); margin-top: 2px; line-height: 1.25; }
+  .vsm-block .pill {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-weight: 800;
+    padding: 4px 11px;
+    border-radius: 11px;
+    font-family: ui-monospace, monospace;
+    align-self: flex-start;
+    margin-top: 4px;
+  }
+  .vsm-block.empty { opacity: 0.45; border-style: dashed; }
+  .vsm-block.low {
+    border-color: var(--low);
+    background: linear-gradient(135deg, rgba(210, 153, 34, 0.08), var(--panel-2));
+  }
+  .vsm-block.low .icon { color: var(--low); }
+  .vsm-block.mid {
+    border-color: var(--mid);
+    background: linear-gradient(135deg, rgba(88, 166, 255, 0.10), var(--panel-2));
+  }
+  .vsm-block.mid .icon { color: var(--mid); }
+  .vsm-block.high {
+    border-color: var(--high);
+    background: linear-gradient(135deg, rgba(63, 185, 80, 0.13), var(--panel-2));
+  }
+  .vsm-block.high .icon { color: var(--high); }
+  .vsm-block.is-goal {
+    outline: 2px solid var(--goal);
+    outline-offset: 2px;
+  }
+</style>
