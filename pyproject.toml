@@ -5,12 +5,12 @@ description = "kinn3 — BED-LLM diagnostic interview engine"
 requires-python = ">=3.12"
 dependencies = [
     "anthropic>=0.50.0",
-    "dspy-ai>=2.5.0",
+    "dspy-ai>=3.0.0",
     "pydantic>=2.6",
     "pyyaml>=6.0",
     "numpy>=1.26",
     "python-dotenv>=1.0",
-    "sentence-transformers>=2.7",
+    "sentence-transformers>=3.0.0",
 ]
 
 [project.optional-dependencies]
