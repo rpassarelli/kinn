@@ -71,6 +71,9 @@ class KinnAgent:
         if self.memory.read("next_probe_order") is None:
             initial_max = max((p.order for p in probes), default=0)
             self.memory.write("next_probe_order", str(initial_max + 1))
+        if self.memory.read("stakeholder_state") is None:
+            from .models import StakeholderState
+            self.memory.write("stakeholder_state", StakeholderState().model_dump_json())
 
     async def turn(self, user_message: str) -> TurnOutput:
         import time
@@ -89,6 +92,10 @@ class KinnAgent:
                 belief.model_copy(update={"turn": new_turn}).model_dump_json())
             self.memory.append("transcript",
                 f"### Turn {new_turn}\nUSER: {user_message}\nAGENT: {out.model_dump_json()}")
+            from .models import StakeholderState
+            ss = StakeholderState.model_validate_json(self.memory.read("stakeholder_state"))
+            ss.fatigue = "heavy" if ss.fatigue == "medium" else "medium"
+            self.memory.write("stakeholder_state", ss.model_dump_json())
             return out
 
         # If no pending probes, drain in-flight then sync-recompile.

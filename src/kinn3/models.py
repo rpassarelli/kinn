@@ -72,3 +72,11 @@ class TurnOutput(BaseModel):
         if len(v.split()) > 30:
             raise ValueError(f"next_question must be ≤30 words, got {len(v.split())}")
         return v
+
+
+class StakeholderState(BaseModel):
+    """Stakeholder-as-system state (separate from Block 4 = org algedonic)."""
+    fatigue: Literal["low", "medium", "heavy"] = "low"
+    register: Literal["neutral", "guarded", "open", "overwhelmed"] = "neutral"
+    rapport: Literal["cold", "warming", "warm"] = "cold"
+    algedonic_personal_moments: list[dict] = Field(default_factory=list)
