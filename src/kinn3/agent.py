@@ -77,12 +77,23 @@ class KinnAgent:
 
     async def turn(self, user_message: str) -> TurnOutput:
         import time
-        _turn_start = time.time()
+        from .reground import detect_fatigue, reground_output
+        from .synthesis import is_synthesis_ready, synthesis_close_output
+        from .invariants import hash_question, is_duplicate
+        from .models import StakeholderState
+        from .prompts import build_system_prompt
+        from .bed_llm import _belief_summary
+
+        _turn_start = time.time()  # Step 0 — for metrics.record (Task 26)
+
+        # ── 1. Load state ────────────────────────────────────────────────
         belief = VSMBeliefState.model_validate_json(self.memory.read("belief_state"))
         probes = _probes_from_json(self.memory.read("probes"))
         transcript = self.memory.read("transcript") or ""
+        if self.events:
+            self.events.emit(actor="agent", event="turn_started", turn=belief.turn + 1)
 
-        from .reground import detect_fatigue, reground_output
+        # ── 2. Reground (FIRST — fatigue may early-return) ──────────────
         if detect_fatigue(transcript):
             if self.events:
                 self.events.emit(actor="agent", event="reground_triggered", turn=belief.turn + 1)
@@ -92,13 +103,12 @@ class KinnAgent:
                 belief.model_copy(update={"turn": new_turn}).model_dump_json())
             self.memory.append("transcript",
                 f"### Turn {new_turn}\nUSER: {user_message}\nAGENT: {out.model_dump_json()}")
-            from .models import StakeholderState
             ss = StakeholderState.model_validate_json(self.memory.read("stakeholder_state"))
             ss.fatigue = "heavy" if ss.fatigue == "medium" else "medium"
             self.memory.write("stakeholder_state", ss.model_dump_json())
             return out
 
-        # If no pending probes, drain in-flight then sync-recompile.
+        # ── 3. Drain in-flight + sync recompile if probes exhausted ─────
         if not any(p.delivery_status == "pending" for p in probes):
             await self.drain()
             probes = _probes_from_json(self.memory.read("probes"))
@@ -106,11 +116,13 @@ class KinnAgent:
                 await self._recompile_now(belief, probes)
                 probes = _probes_from_json(self.memory.read("probes"))
 
-        # 1. Pick the highest-EIG pending probe
+        # ── 4. Probe selection (BED-LLM argmax EIG) ─────────────────────
         probe = await select_probe(self.client, probes, belief)
+        if self.events:
+            self.events.emit(actor="agent", event="probe_selected",
+                             turn=belief.turn + 1, probe_order=probe.order)
 
-        # 2. Forced-tool call with retry on ValidationError
-        from .prompts import build_system_prompt
+        # ── 5. Forced-tool call with retry → bridge on exhaustion ───────
         sys_prompt = build_system_prompt()
         belief_summary = _belief_summary(belief)
         out = await self._run_turn_with_retry(
@@ -118,7 +130,7 @@ class KinnAgent:
             probe=probe, user_message=user_message,
         )
 
-        # Hash dedup — retry once if the question was asked before in this session.
+        # ── 6. Hash dedup (retry once if duplicate) ─────────────────────
         prior_hashes = set((self.memory.read("question_hashes") or "").split())
         if is_duplicate(out.next_question, prior_hashes):
             if self.events:
@@ -130,36 +142,40 @@ class KinnAgent:
             )
         self.memory.append("question_hashes", hash_question(out.next_question))
 
-        # 3. Apply mutations + bump turn
+        # ── 7. Apply mutations + bump turn ──────────────────────────────
         new_turn = belief.turn + 1
         new_belief = update_belief(belief, out.signal_mutations, turn=new_turn)
 
-        from .synthesis import is_synthesis_ready, synthesis_close_output
+        # ── 8. Synthesis-close override if all blocks high ──────────────
         if is_synthesis_ready(new_belief):
             if self.events:
                 self.events.emit(actor="agent", event="synthesis_close_reached", turn=new_turn)
             out = synthesis_close_output()
 
-        # 4. Mark probe answered
+        # ── 9. Mark probe answered ──────────────────────────────────────
         for p in probes:
             if p.order == probe.order:
                 p.delivery_status = "answered"
                 p.delivered_at_turn = new_turn
                 p.answered_at_turn = new_turn
 
-        # 5. Persist
+        # ── 10. Persist belief + probes + transcript ────────────────────
         self.memory.write("belief_state", new_belief.model_dump_json())
         self.memory.write("probes", _probes_to_json(probes))
         self.memory.append("transcript",
             f"### Turn {new_turn}\nUSER: {user_message}\nAGENT: {out.model_dump_json()}")
 
-        # 6. Every 3 turns, schedule background recompile (drainable)
+        # ── 11. Stakeholder state update (no-op if no fatigue this turn)
+        # (Reground handled the fatigue spike above; this branch is for
+        # gradual register/rapport updates if/when added in v0.1.)
+
+        # ── 12. Schedule background recompile every 3 turns ─────────────
         if new_turn % 3 == 0:
             task = asyncio.create_task(self._recompile_now(new_belief, probes))
             self._pending_tasks.add(task)
             task.add_done_callback(self._pending_tasks.discard)
 
-        # Record metrics (Task 26)
+        # ── 13. Record metrics ─────────────────────────────────────────
         self.metrics.record(
             turn_n=new_turn,
             wall_clock_s=time.time() - _turn_start,
