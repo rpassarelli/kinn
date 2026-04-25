@@ -40,6 +40,37 @@ BLOCK_ICONS = {1: "🎯", 2: "🧭", 3: "⚡", 4: "💢", 5: "🪜", 6: "⚙️"
 RESOLUTION_RANK = {"empty": 0, "low": 1, "mid": 2, "high": 3}
 
 
+def _extract_signals(heard: list[str], max_signals: int = 3) -> list[str]:
+    """Extract the 3 most stakeholder-y signals from a `heard` list.
+
+    Each `heard` entry usually has shape `'<quote>' — <interpretation>`. The quote
+    itself often contains contractions ("I'm tired", "can't hire") that confuse
+    a non-greedy regex on apostrophes.
+
+    Heuristic: find the FIRST opening quote and the LAST matching closing quote
+    in the string — everything between is the stakeholder's words. The
+    interpretation tail rarely uses quote characters, so this is robust.
+    """
+    out = []
+    for h in heard[:max_signals]:
+        quote = None
+        # Try each quote-pair shape, prefer the one with the longest span.
+        for opener, closer in [("'", "'"), ('"', '"'), ("‘", "’"), ("“", "”")]:
+            first = h.find(opener)
+            last = h.rfind(closer)
+            if first != -1 and last > first:
+                candidate = h[first + 1:last].strip()
+                if not quote or len(candidate) > len(quote):
+                    quote = candidate
+        if not quote:
+            # Fallback: strip the dash-separated interpretation tail.
+            quote = h.split(" — ")[0].split(" - ")[0].strip()
+        if len(quote) > 110:
+            quote = quote[:107].rstrip() + "…"
+        out.append(quote)
+    return out
+
+
 def parse_transcript(path: Path) -> list[dict]:
     text = path.read_text()
     turns = []
@@ -55,10 +86,12 @@ def parse_transcript(path: Path) -> list[dict]:
             agent = json.loads(a.group(1).strip())
         except json.JSONDecodeError:
             continue
+        heard = agent.get("heard", [])
         turns.append({
             "turn": turn_n,
-            "user": u.group(1).strip(),
-            "delta": agent.get("delta", ""),
+            "user": u.group(1).strip(),         # full text (kept for archival, unused in UI)
+            "signals": _extract_signals(heard), # 3 bullet points for stakeholder bubble
+            "thinking": agent.get("delta", ""), # kinn3's reasoning summary
             "next_question": agent.get("next_question", ""),
             "signal_mutations": agent.get("signal_mutations", []),
         })
@@ -180,27 +213,53 @@ main {
 }
 .bubble {
   padding: 22px 26px; border-radius: 16px; line-height: 1.5;
-  white-space: pre-wrap; border: 1px solid;
+  border: 1px solid;
 }
+/* ── Stakeholder: 3 bullet signals ──────────────── */
 .bubble.user {
   background: rgba(88,166,255,0.06); border-color: rgba(88,166,255,0.25);
-  font-size: 18px; font-weight: 400;
-  align-self: flex-start; max-width: 95%;
+  align-self: flex-start; max-width: 96%;
 }
-.bubble.user::before {
-  content: "👤 STAKEHOLDER";
-  display: block; font-size: 10px; font-weight: 700; letter-spacing: 0.15em;
-  color: var(--user); margin-bottom: 12px; font-family: ui-monospace, monospace;
+.bubble.user .label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.15em;
+  color: var(--user); margin-bottom: 14px; font-family: ui-monospace, monospace;
 }
+.bubble.user ul {
+  list-style: none; padding: 0; margin: 0;
+}
+.bubble.user li {
+  font-size: 17px; font-weight: 500; line-height: 1.45;
+  padding: 6px 0 6px 22px; position: relative; color: var(--text);
+}
+.bubble.user li::before {
+  content: "›"; position: absolute; left: 4px; top: 4px;
+  color: var(--user); font-weight: 700; font-size: 18px;
+}
+
+/* ── Kinn3: thinking + output, two sections ─────── */
 .bubble.agent {
   background: rgba(210,168,255,0.07); border-color: rgba(210,168,255,0.35);
-  font-size: 22px; font-weight: 600; color: var(--text);
-  align-self: flex-end; max-width: 95%;
+  align-self: flex-end; max-width: 96%;
 }
-.bubble.agent::before {
-  content: "🤖 KINN3 ASKS";
-  display: block; font-size: 10px; font-weight: 700; letter-spacing: 0.15em;
-  color: var(--agent); margin-bottom: 12px; font-family: ui-monospace, monospace;
+.bubble.agent .label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.15em;
+  color: var(--agent); margin-bottom: 14px; font-family: ui-monospace, monospace;
+}
+.bubble.agent .section { margin-bottom: 14px; }
+.bubble.agent .section:last-child { margin-bottom: 0; }
+.bubble.agent .sub-label {
+  font-size: 9px; font-weight: 700; letter-spacing: 0.18em;
+  color: var(--text-muted); margin-bottom: 6px; font-family: ui-monospace, monospace;
+}
+.bubble.agent .thinking {
+  font-size: 13px; line-height: 1.5; color: var(--text-dim);
+  font-family: ui-monospace, "SF Mono", monospace;
+  background: rgba(0,0,0,0.25); padding: 10px 14px; border-radius: 8px;
+  border-left: 3px solid var(--agent);
+}
+.bubble.agent .output {
+  font-size: 22px; font-weight: 600; line-height: 1.35; color: var(--text);
+  padding: 6px 0;
 }
 
 /* ── MODEL (big VSM) ────────────────────────────── */
@@ -380,13 +439,26 @@ function renderChat() {
     pane.innerHTML = '<div class="empty-chat">Press <b>▶ Run 30s Demo</b> to watch a dental-clinic owner\'s interview unfold.</div>';
     return;
   }
-  // Show ONLY the current turn's user msg + agent question.
   const t = TURNS[currentTurn - 1];
+  const signals = (t.signals || []).map(s => `<li>${escapeHtml(s)}</li>`).join("");
   pane.innerHTML = `
     <div class="chat-turn">
       <div class="turn-tag">Turn ${t.turn} of ${TURNS.length}</div>
-      <div class="bubble user">${escapeHtml(t.user)}</div>
-      <div class="bubble agent">${escapeHtml(t.next_question)}</div>
+      <div class="bubble user">
+        <div class="label">👤 STAKEHOLDER · 3 signals</div>
+        <ul>${signals}</ul>
+      </div>
+      <div class="bubble agent">
+        <div class="label">🤖 KINN3</div>
+        <div class="section">
+          <div class="sub-label">⚙ Thinking · image shift</div>
+          <div class="thinking">${escapeHtml(t.thinking || "(no shift this turn)")}</div>
+        </div>
+        <div class="section">
+          <div class="sub-label">→ Output · next question</div>
+          <div class="output">${escapeHtml(t.next_question)}</div>
+        </div>
+      </div>
     </div>
   `;
   pane.scrollTop = 0;
