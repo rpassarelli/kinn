@@ -5,4 +5,6 @@ __pycache__/
 .pytest_cache/
 dist/
 *.egg-info/
-calibration-runs/
+# Calibration runs are large + transient; ignore everything except the baseline.
+calibration-runs/*
+!calibration-runs/kinn2-baseline/

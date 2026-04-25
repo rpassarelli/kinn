@@ -1,0 +1,64 @@
+{
+  "ran_at": "2026-04-25T08:05:40.246454",
+  "n_metrics_scraped": 1,
+  "noise_floor_warning": "Only 1 metrics.yml found \u2014 stddev unavailable. Run /calibrate 1 again 1-2 more times to capture noise floor.",
+  "sources": [
+    "/root/kinn2/calibration/runs/20260425-020214/metrics.yml"
+  ],
+  "per_persona": {
+    "dental-clinic": {
+      "n_runs": 1,
+      "mean": 0.953,
+      "stddev": null,
+      "min": 0.953,
+      "max": 0.953,
+      "samples": [
+        0.953
+      ]
+    },
+    "shinpads-ecommerce": {
+      "n_runs": 1,
+      "mean": 0.9015,
+      "stddev": null,
+      "min": 0.9015,
+      "max": 0.9015,
+      "samples": [
+        0.9015
+      ]
+    },
+    "family-manufacturing": {
+      "n_runs": 1,
+      "mean": 0.929,
+      "stddev": null,
+      "min": 0.929,
+      "max": 0.929,
+      "samples": [
+        0.929
+      ]
+    },
+    "solo-agency": {
+      "n_runs": 1,
+      "mean": 0.891,
+      "stddev": null,
+      "min": 0.891,
+      "max": 0.891,
+      "samples": [
+        0.891
+      ]
+    },
+    "racks-reseller": {
+      "n_runs": 1,
+      "mean": 0.927,
+      "stddev": null,
+      "min": 0.927,
+      "max": 0.927,
+      "samples": [
+        0.927
+      ]
+    }
+  },
+  "mean_composite": 0.9203,
+  "n_personas_with_data": 5,
+  "missing_personas": [],
+  "iter_used": "iter_0 (unmutated baseline)"
+}
