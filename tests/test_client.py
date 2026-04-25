@@ -94,3 +94,32 @@ async def test_with_retries_exhausts_5xx_after_3(monkeypatch):
     with pytest.raises(InternalServerError):
         await _with_retries(call)
     assert call.await_count == 4  # 1 initial + 3 retries
+
+
+def _make_overloaded():
+    """Construct OverloadedError (529). It inherits APIStatusError directly,
+    NOT InternalServerError — separate retry bucket per kinn3 retry policy."""
+    from anthropic._exceptions import OverloadedError
+    return OverloadedError(message="overloaded", response=MagicMock(status_code=529), body=None)
+
+
+@pytest.mark.asyncio
+async def test_with_retries_recovers_after_one_529(monkeypatch):
+    """OverloadedError (529) should be caught and retried (5 retries with longer backoff)."""
+    monkeypatch.setattr(asyncio, "sleep", AsyncMock())
+    call = AsyncMock(side_effect=[_make_overloaded(), "ok"])
+    result = await _with_retries(call)
+    assert result == "ok"
+    assert call.await_count == 2
+
+
+@pytest.mark.asyncio
+async def test_with_retries_exhausts_529_after_5(monkeypatch):
+    """After 5 consecutive 529s, raise — Anthropic isn't recovering, fail loud."""
+    monkeypatch.setattr(asyncio, "sleep", AsyncMock())
+    from anthropic import APIStatusError
+    call = AsyncMock(side_effect=[_make_overloaded()] * 8)
+    with pytest.raises(APIStatusError) as exc_info:
+        await _with_retries(call)
+    assert exc_info.value.status_code == 529
+    assert call.await_count == 6  # 1 initial + 5 retries

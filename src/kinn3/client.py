@@ -19,6 +19,7 @@ from anthropic import (
     AsyncAnthropic,
     APITimeoutError,
     APIConnectionError,
+    APIStatusError,
     RateLimitError,
     InternalServerError,
     AuthenticationError,
@@ -34,7 +35,8 @@ async def _with_retries(call: Callable[[], Awaitable[T]]) -> T:
 
     Policy table:
       RateLimitError (429): exp backoff 1s, 2s, 4s, 8s — max 4 retries
-      InternalServerError (5xx) / overloaded: jittered backoff 0.5-1.5s, 1-3s, 2-6s — max 3 retries
+      InternalServerError (5xx): jittered backoff 0.5-1.5s, 1-3s, 2-6s — max 3 retries
+      OverloadedError (529): longer jittered backoff 5-15s, 10-30s, 20-60s — max 5 retries
       APITimeoutError / APIConnectionError: retry once with 30s timeout
       AuthenticationError / PermissionDeniedError: fail loud, no retry
 
@@ -42,6 +44,7 @@ async def _with_retries(call: Callable[[], Awaitable[T]]) -> T:
     """
     rate_delays = [1.0, 2.0, 4.0, 8.0]
     server_delay_ranges = [(0.5, 1.5), (1.0, 3.0), (2.0, 6.0)]
+    overloaded_delay_ranges = [(5.0, 15.0), (10.0, 30.0), (15.0, 45.0), (20.0, 60.0), (30.0, 90.0)]
     timeout_retries_left = 1
 
     while True:
@@ -57,6 +60,16 @@ async def _with_retries(call: Callable[[], Awaitable[T]]) -> T:
             if not server_delay_ranges:
                 raise
             lo, hi = server_delay_ranges.pop(0)
+            await asyncio.sleep(random.uniform(lo, hi))
+        except APIStatusError as e:
+            # OverloadedError (529) inherits APIStatusError directly, NOT InternalServerError.
+            # Treat it as a capacity issue with longer waits — Anthropic's overloaded periods
+            # commonly last 30-60s during peak load.
+            if getattr(e, "status_code", None) != 529:
+                raise
+            if not overloaded_delay_ranges:
+                raise
+            lo, hi = overloaded_delay_ranges.pop(0)
             await asyncio.sleep(random.uniform(lo, hi))
         except (APITimeoutError, APIConnectionError):
             if timeout_retries_left <= 0:
