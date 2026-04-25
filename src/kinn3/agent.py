@@ -148,7 +148,6 @@ class KinnAgent:
         self, *, sys_prompt: str, belief_summary: str, probe: Probe, user_message: str,
     ) -> TurnOutput:
         hint = ""
-        last_err: Exception | None = None
         for attempt in range(MAX_VALIDATION_RETRIES + 1):
             try:
                 out, usage = await self.client.run_turn_tool(
@@ -162,9 +161,16 @@ class KinnAgent:
                 self._last_usage = usage
                 return out
             except ValidationError as e:
-                last_err = e
                 hint = f"Previous attempt failed validation: {str(e)[:200]}. Fix exactly-one-'?' and ≤30 word rules."
-        raise RuntimeError(f"run_turn_tool failed validation {MAX_VALIDATION_RETRIES + 1} times: {last_err}")
+        # Bridge turn (Task 33)
+        if self.events:
+            self.events.emit(actor="agent", event="bridge_turn_emitted", reason="validation_exhausted")
+        return TurnOutput(
+            heard=["I want to make sure I follow what you said."],
+            delta="No image shift this turn.",
+            next_question="Tell me more about what's most pressing right now?",
+            signal_mutations=[],
+        )
 
     async def _recompile_now(self, belief: VSMBeliefState, current_probes: list[Probe]) -> None:
         # Reserve a contiguous block of orders BEFORE the LLM call so two concurrent

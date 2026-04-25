@@ -114,6 +114,32 @@ async def test_drain_awaits_background_recompile(memory):
 
 
 @pytest.mark.asyncio
+async def test_turn_emits_bridge_when_all_retries_exhausted(memory):
+    """If validation retries fail 3×, agent emits a bridge turn instead of crashing."""
+    from pydantic import ValidationError
+
+    def _real_validation_error():
+        try:
+            TurnOutput(heard=[], delta="", next_question="why? how?", signal_mutations=[])
+        except ValidationError as e:
+            return e
+        raise RuntimeError("expected ValidationError to be raised")
+
+    err = _real_validation_error()
+    mock_client = AsyncMock()
+    mock_client.sample_answers = AsyncMock(return_value=["x"])
+    mock_client.predict_mutations = AsyncMock(return_value=[])
+    mock_client.run_turn_tool = AsyncMock(side_effect=err)
+
+    agent = KinnAgent(client=mock_client, memory=memory, probes=list(BOOTSTRAP_PROBES))
+    out = await agent.turn("hi")
+    assert "?" in out.next_question
+    assert out.delta == "No image shift this turn."
+    assert "tell me more" in out.next_question.lower() or "pressing" in out.next_question.lower()
+    assert mock_client.run_turn_tool.await_count == 3  # MAX_VALIDATION_RETRIES + 1
+
+
+@pytest.mark.asyncio
 async def test_turn_rejects_duplicate_question(memory):
     """If next_question hashes to same as a prior question, retry once."""
     def _u(): return {"input_tokens": 100, "cache_read_input_tokens": 50, "cache_creation_input_tokens": 0, "output_tokens": 30}
