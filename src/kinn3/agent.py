@@ -16,6 +16,7 @@ drain() — await any in-flight background tasks; CLI calls before exit.
 from __future__ import annotations
 import asyncio
 import json
+from pathlib import Path
 from typing import Protocol
 from pydantic import ValidationError
 from .bed_llm import select_probe, update_belief, _belief_summary
@@ -46,10 +47,13 @@ class KinnAgent:
         memory: MemoryAdapter,
         *,                                 # all kwargs after — Task 26 adds events_path/ledger_path/session_id
         probes: list[Probe] | None = None,
+        events_path: Path | None = None,
     ):
         self.client = client
         self.memory = memory
         self._pending_tasks: set[asyncio.Task] = set()
+        from .events import EventLog
+        self.events = EventLog(events_path) if events_path else None
         self._init_state(probes or list(BOOTSTRAP_PROBES))
 
     def _init_state(self, probes: list[Probe]) -> None:
