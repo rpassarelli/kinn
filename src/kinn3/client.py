@@ -146,6 +146,40 @@ class _SamplerMixin:
                 pass
         return out
 
+    async def run_turn_tool(
+        self,
+        *,
+        system: str,
+        belief_summary: str,
+        probe,
+        user_message: str,
+        correction_hint: str = "",
+    ):
+        """Execute one turn via emit_turn_response tool. NO thinking (forced tool).
+        Raises pydantic.ValidationError if model output violates schema; agent retries.
+        """
+        from .tools import EMIT_TURN_RESPONSE_TOOL
+        from .models import TurnOutput
+        user_content = (
+            f"# Belief\n{belief_summary}\n\n"
+            f"# Pinned probe (order={probe.order}, block={probe.target_block}, depth={probe.depth})\n"
+            f"{probe.draft}\n\n"
+            f"# Stakeholder message\n{user_message}\n\n"
+            "Emit the emit_turn_response tool call. The next_question MUST contain exactly one '?' "
+            "and be ≤30 words. Heard MUST contain 1-5 quote-backed observations."
+        )
+        if correction_hint:
+            user_content += f"\n\n# CORRECTION HINT (retry)\n{correction_hint}"
+        result = await self.forced_tool_call(
+            system=system,
+            user_content=user_content,
+            tool=EMIT_TURN_RESPONSE_TOOL,
+            max_tokens=2048,
+        )
+        if not result:
+            raise RuntimeError("emit_turn_response tool was not called")
+        return TurnOutput(**result)  # raises ValidationError on schema failure
+
 
 class KinnClient(_SamplerMixin):
     """Thin wrapper around AsyncAnthropic with our defaults."""
