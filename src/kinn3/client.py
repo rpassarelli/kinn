@@ -77,6 +77,30 @@ _SAMPLE_ANSWERS_TOOL = {
     },
 }
 
+_RECOMPILE_SLATE_TOOL = {
+    "name": "propose_probe_slate",
+    "description": "Emit the next 3-5 probes as structured slate.",
+    "input_schema": {
+        "type": "object",
+        "required": ["probes"],
+        "properties": {
+            "probes": {
+                "type": "array",
+                "minItems": 3, "maxItems": 5,
+                "items": {
+                    "type": "object",
+                    "required": ["target_block", "depth", "draft"],
+                    "properties": {
+                        "target_block": {"type": "integer", "minimum": 1, "maximum": 6},
+                        "depth": {"enum": ["identity", "dimension", "facet", "gap"]},
+                        "draft": {"type": "string", "minLength": 10, "maxLength": 200},
+                    },
+                },
+            },
+        },
+    },
+}
+
 _PREDICT_MUTATIONS_TOOL = {
     "name": "propose_mutations",
     "description": "Propose signal mutations that would result from this answer.",
@@ -179,6 +203,60 @@ class _SamplerMixin:
         if not result:
             raise RuntimeError("emit_turn_response tool was not called")
         return TurnOutput(**result)  # raises ValidationError on schema failure
+
+    async def recompile_probes_two_phase(
+        self,
+        *,
+        belief_summary: str,
+        transcript: str,
+        next_order_start: int,
+        thinking_budget: int = 24000,
+    ):
+        """Two-phase recompile (avoids thinking + forced-tool incompatibility).
+
+        Phase 1: extended-thinking text call → reasoning about target blocks.
+        Phase 2: forced-tool call (no thinking) → structured probe slate, fed Phase 1's text.
+        Probe orders are monotonic from `next_order_start` (no cross-recompile collisions).
+        """
+        from .models import Probe
+
+        # Phase 1 — deep reasoning about which blocks to target next.
+        reasoning = await self.thinking_text_call(
+            system=(
+                "You are kinn3's probe planner. Reason carefully about which 3-5 VSM blocks "
+                "the next probes should target to maximize information gain. Consider what's "
+                "still empty/low, what just shifted, and what dependencies exist. Output your "
+                "plan as plain text — a downstream tool call will turn it into structured probes."
+            ),
+            user_content=(
+                f"# Current belief\n{belief_summary}\n\n"
+                f"# Transcript so far\n{transcript[-4000:]}\n\n"
+                "Reason about: (1) which 3-5 blocks deserve the next probes; (2) what depth "
+                "(identity/dimension/facet/gap) for each; (3) the exact wording for each probe."
+            ),
+            thinking_budget=thinking_budget,
+            max_tokens=4096,
+        )
+
+        # Phase 2 — structured emission via forced tool, NO thinking.
+        result = await self.forced_tool_call(
+            system="You convert a probe-planning rationale into a structured probe slate via propose_probe_slate.",
+            user_content=(
+                f"# Plan\n{reasoning}\n\n"
+                "Emit propose_probe_slate with 3-5 probes that match the plan."
+            ),
+            tool=_RECOMPILE_SLATE_TOOL,
+            max_tokens=2048,
+        )
+        if not result:
+            return []
+        out: list[Probe] = []
+        for i, raw in enumerate(result.get("probes", [])):
+            try:
+                out.append(Probe(order=next_order_start + i, **raw))
+            except Exception:
+                pass
+        return out
 
 
 class KinnClient(_SamplerMixin):
