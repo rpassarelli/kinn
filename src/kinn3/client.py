@@ -24,6 +24,7 @@ from anthropic import (
     AuthenticationError,
     PermissionDeniedError,
 )
+from .models import SignalMutation as _SignalMutation
 
 T = TypeVar("T")
 
@@ -64,9 +65,86 @@ async def _with_retries(call: Callable[[], Awaitable[T]]) -> T:
             await asyncio.sleep(2.0)
 
 
+_SAMPLE_ANSWERS_TOOL = {
+    "name": "propose_answers",
+    "description": "Propose N plausible stakeholder answers to the given probe.",
+    "input_schema": {
+        "type": "object",
+        "required": ["answers"],
+        "properties": {
+            "answers": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+        },
+    },
+}
+
+_PREDICT_MUTATIONS_TOOL = {
+    "name": "propose_mutations",
+    "description": "Propose signal mutations that would result from this answer.",
+    "input_schema": {
+        "type": "object",
+        "required": ["mutations"],
+        "properties": {
+            "mutations": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "required": ["block", "new_resolution", "quote"],
+                    "properties": {
+                        "block": {"type": "integer", "minimum": 1, "maximum": 6},
+                        "new_resolution": {"enum": ["empty", "low", "mid", "high"]},
+                        "quote": {"type": "string"},
+                    },
+                },
+            },
+        },
+    },
+}
+
+
 class _SamplerMixin:
-    """Holds higher-level methods. Populated by Tasks 14, 17, 18 via direct edits to this file."""
-    pass
+    """Higher-level methods composed from forced_tool_call + thinking_text_call.
+    Methods are added across Tasks 14, 17, 18.
+    """
+
+    async def sample_answers(
+        self, *, probe_draft: str, belief_summary: str, n: int = 6
+    ) -> list[str]:
+        result = await self.forced_tool_call(
+            system="You predict how a stakeholder in a business diagnostic interview would plausibly answer.",
+            user_content=(
+                f"Belief so far:\n{belief_summary}\n\n"
+                f"Probe: {probe_draft}\n\n"
+                f"Propose {n} plausible, varied stakeholder answers (10-40 words each)."
+            ),
+            tool=_SAMPLE_ANSWERS_TOOL,
+            max_tokens=512,
+        )
+        if not result:
+            return []
+        return list(result.get("answers", []))[:n]
+
+    async def predict_mutations(
+        self, *, probe_draft: str, answer: str, belief_summary: str
+    ) -> list[_SignalMutation]:
+        result = await self.forced_tool_call(
+            system="You predict the VSM signal mutations caused by a stakeholder answer.",
+            user_content=(
+                f"Belief so far:\n{belief_summary}\n\n"
+                f"Probe: {probe_draft}\nAnswer: {answer}\n\n"
+                "Propose only quote-backed mutations. 0-3 mutations typical."
+            ),
+            tool=_PREDICT_MUTATIONS_TOOL,
+            max_tokens=512,
+        )
+        out: list[_SignalMutation] = []
+        if not result:
+            return out
+        for raw in result.get("mutations", []):
+            try:
+                out.append(_SignalMutation(**raw))
+            except Exception:
+                pass
+        return out
 
 
 class KinnClient(_SamplerMixin):
