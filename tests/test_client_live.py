@@ -22,9 +22,14 @@ async def test_sample_answers_returns_strings():
 
 @pytest.mark.asyncio
 async def test_prompt_cache_hits_after_first_call():
-    """Three sequential calls with same large system prompt → cache hits on calls 2 and 3."""
+    """Three sequential calls with same large system prompt → cache write on call 1, reads on 2-3.
+    Uses a UUID-prefixed prompt so call 1 is always a cold-write regardless of prior runs (5-min TTL).
+    """
+    import uuid
     c = KinnClient()
-    long_system = "kinn3 cache test system prompt. " * 400  # >1024 tokens
+    # UUID prefix guarantees this prompt has never been cached before.
+    unique = uuid.uuid4().hex
+    long_system = f"kinn3 cache test {unique}. " + ("system prompt body. " * 400)  # >1024 tokens
     tool = {
         "name": "echo",
         "description": "echo a value",
@@ -34,9 +39,9 @@ async def test_prompt_cache_hits_after_first_call():
         },
     }
 
+    cache_writes = []
     cache_reads = []
     for i in range(3):
-        # Use raw client to inspect usage; can't get usage through forced_tool_call wrapper.
         msg = await c.raw.messages.create(
             model=c.model,
             max_tokens=64,
@@ -45,9 +50,10 @@ async def test_prompt_cache_hits_after_first_call():
             tool_choice={"type": "tool", "name": "echo"},
             messages=[{"role": "user", "content": f"Call number {i}, echo 'ok'"}],
         )
+        cache_writes.append(getattr(msg.usage, "cache_creation_input_tokens", 0) or 0)
         cache_reads.append(getattr(msg.usage, "cache_read_input_tokens", 0) or 0)
 
-    # Call 1: cache write (no read). Calls 2 and 3: should read from cache.
-    assert cache_reads[0] == 0, f"Call 1 should be cache write only, got read tokens: {cache_reads[0]}"
-    assert cache_reads[1] > 0, f"Call 2 expected cache hit, got 0 (caching may be broken or prompt too short)"
-    assert cache_reads[2] > 0, f"Call 3 expected cache hit, got 0"
+    # Call 1: cache WRITE (large), no read. Calls 2-3: cache READ (large).
+    assert cache_writes[0] > 0, f"Call 1 expected cache write, got writes={cache_writes}"
+    assert cache_reads[1] > 0, f"Call 2 expected cache hit, got reads={cache_reads}"
+    assert cache_reads[2] > 0, f"Call 3 expected cache hit, got reads={cache_reads}"
