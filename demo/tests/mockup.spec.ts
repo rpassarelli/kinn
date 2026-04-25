@@ -51,15 +51,49 @@ test("mockup commands: highlight + arrow + particles + caption", async ({ page }
   await page.screenshot({ path: "tests/screenshots/mockup-commands.png", fullPage: false });
 });
 
-test("mockup spotlight + gridReset", async ({ page }) => {
+test("spotlight P1 → side mode (panel left, caption right)", async ({ page }) => {
   await page.goto("/mockup");
-  await page.evaluate(() => (window as any).M.spotlight("p3"));
-  await page.waitForTimeout(900);  // settle into spotlight
-  await page.screenshot({ path: "tests/screenshots/mockup-spotlight.png", fullPage: false });
-  await page.evaluate(() => (window as any).M.gridReset());
-  await page.waitForTimeout(800);  // settle back
-  await page.screenshot({ path: "tests/screenshots/mockup-grid-reset.png", fullPage: false });
-  // After reset, p3 transform should be cleared
-  const transform = await page.locator("#mock-p3").evaluate(el => getComputedStyle(el).transform);
+  await page.evaluate(() => (window as any).M.spotlight("p1", "01 · THE SURFACE",
+    "It looks like a simple chat with an AI. The stakeholder just talks."));
+  await page.waitForTimeout(1500); // panel settle + caption appear
+  await page.screenshot({ path: "tests/screenshots/spotlight-p1-side.png", fullPage: false });
+
+  // Caption should sit to the right of the spotlit panel (no overlap)
+  const main = await page.locator("main").boundingBox();
+  const cap = await page.locator("#mock-caption").boundingBox();
+  const panel = await page.locator("#mock-p1").boundingBox();
+  if (!main || !cap || !panel) throw new Error("layout missing");
+  expect(cap.x).toBeGreaterThan(panel.x + panel.width * 0.9);
+});
+
+test("spotlight P3 → below mode (panel top, caption below)", async ({ page }) => {
+  await page.goto("/mockup");
+  await page.evaluate(() => (window as any).M.spotlight("p3", "03 · THE MODEL",
+    "Six cybernetic dimensions of the business."));
+  await page.waitForTimeout(1500);
+  await page.screenshot({ path: "tests/screenshots/spotlight-p3-below.png", fullPage: false });
+
+  // Caption should be in the lower half of main
+  const main = await page.locator("main").boundingBox();
+  const cap = await page.locator("#mock-caption").boundingBox();
+  if (!main || !cap) throw new Error("layout missing");
+  expect(cap.y).toBeGreaterThan(main.y + main.height * 0.55);
+});
+
+test("spotlight toggles off when called twice on the same panel", async ({ page }) => {
+  await page.goto("/mockup");
+  // First call → on
+  await page.evaluate(() => (window as any).M.spotlight("p2", "step", "hello"));
+  await page.waitForTimeout(1200);
+  let active = await page.evaluate(() => (window as any).M.spotlightActive);
+  expect(active).toBe("p2");
+  // Second call same panel → off
+  await page.evaluate(() => (window as any).M.spotlight("p2"));
+  await page.waitForTimeout(1000);
+  active = await page.evaluate(() => (window as any).M.spotlightActive);
+  expect(active).toBeNull();
+  // Panel transform cleared
+  const transform = await page.locator("#mock-p2").evaluate(el => getComputedStyle(el).transform);
   expect(transform === "none" || transform === "matrix(1, 0, 0, 1, 0, 0)").toBe(true);
+  await page.screenshot({ path: "tests/screenshots/spotlight-toggle-off.png", fullPage: false });
 });

@@ -28,7 +28,19 @@ interface ArrowOpts { color?: string; width?: number; durSec?: number; }
 interface ParticleOpts { color?: string; n?: number; size?: number; }
 interface HighlightOpts { color?: string; cycles?: number; duration?: number; }
 
+/** Panels on the left column → caption flows to the right of the spotlight.
+ *  Other panels → caption flows below the spotlight (they're already top/right). */
+const LEFT_SIDE_PANELS = new Set<PanelId>(["p1", "p2"]);
+
+interface SpotlightLayout {
+  panel: { x: number; y: number; scale: number };
+  caption: { left: number; top: number; width: number; align: "left" | "center" };
+  mode: "side" | "below";
+}
+
 export class MockupController {
+  /** Currently spotlit panel (null = none). Used for the toggle behavior. */
+  spotlightActive: PanelId | null = null;
   /** Pulse a glowing ring around a panel. */
   highlight(id: PanelId, opts: HighlightOpts = {}) {
     const el = this.$(id); if (!el) return;
@@ -77,36 +89,160 @@ export class MockupController {
       .to(el, { x: 0, duration: 0.08, clearProps: "transform" });
   }
 
-  /** Move + scale a panel to center stage; dim the others. */
-  spotlight(id: PanelId, scale?: number) {
-    const el = this.$(id); if (!el) return;
+  /** Spotlight a panel with optional caption.
+   *
+   *  - Toggle: calling on the currently-spotlit panel turns it off.
+   *  - Layout: P1/P2 → panel slides LEFT, caption fills the RIGHT half.
+   *            P3/P4/P5 → panel rises to the TOP, caption flows BELOW.
+   *  - Switching: spotlighting a different panel auto-drops the previous first.
+   */
+  spotlight(id: PanelId, label = "", text = "") {
+    if (this.spotlightActive === id) {
+      this.spotlightOff();
+      return;
+    }
+    if (this.spotlightActive) {
+      this.spotlightOff();
+      // Wait for the off animation to settle before bringing the new one up
+      window.setTimeout(() => this.spotlightOn(id, label, text), 720);
+      return;
+    }
+    this.spotlightOn(id, label, text);
+  }
+
+  spotlightOn(id: PanelId, label = "", text = "") {
+    const el = this.$(id);
     const main = document.querySelector("main") as HTMLElement | null;
-    if (!main) return;
+    if (!el || !main) return;
+    this.spotlightActive = id;
+
+    const layout = this.computeSpotlightLayout(id);
+
+    // Dim non-spotlit panels
+    document.querySelectorAll<HTMLElement>(".mock-panel").forEach(p => {
+      if (p !== el) gsap.to(p, { opacity: 0.12, duration: 0.45 });
+    });
+
+    el.style.zIndex = "100";
+    // Animate panel to its repositioned spotlight slot (left for P1/P2, top for others)
+    gsap.to(el, {
+      x: layout.panel.x, y: layout.panel.y, scale: layout.panel.scale,
+      duration: 0.85, ease: "power3.inOut",
+    });
+
+    // Caption: appears after the panel reaches its slot
+    if (label || text) {
+      window.setTimeout(() => this.showSpotlightCaption(layout, label, text), 560);
+    }
+  }
+
+  spotlightOff() {
+    this.spotlightActive = null;
+    // Hide caption and reset its inline positioning back to the bottom-centered default
+    const cap = document.getElementById("mock-caption");
+    if (cap) {
+      gsap.to(cap, { opacity: 0, duration: 0.3, onComplete: () => this.resetCaptionPosition() });
+    }
+    // Drop all panels back into the grid
+    document.querySelectorAll<HTMLElement>(".mock-panel").forEach(p => {
+      gsap.to(p, { x: 0, y: 0, scale: 1, opacity: 1, duration: 0.75, ease: "back.inOut(1.1)",
+        clearProps: "transform,zIndex" });
+    });
+  }
+
+  /** Drop all spotlit panels back into the grid + restore opacities + clear caption. */
+  gridReset() {
+    if (this.spotlightActive) { this.spotlightOff(); return; }
+    document.querySelectorAll<HTMLElement>(".mock-panel").forEach(p => {
+      gsap.to(p, { x: 0, y: 0, scale: 1, opacity: 1, duration: 0.7, ease: "back.inOut(1.1)",
+        clearProps: "transform,zIndex" });
+    });
+  }
+
+  // ── spotlight internals ──────────────────────────
+
+  private computeSpotlightLayout(id: PanelId): SpotlightLayout {
+    const el = this.$(id)!;
+    const main = document.querySelector("main") as HTMLElement;
     gsap.set(el, { clearProps: "transform" });
     const r = el.getBoundingClientRect();
     const m = main.getBoundingClientRect();
     const cx = r.left - m.left + r.width / 2;
     const cy = r.top - m.top + r.height / 2;
-    const targetCx = m.width / 2;
-    const targetCy = m.height / 2;
+
+    const sideMode = LEFT_SIDE_PANELS.has(id);
+    let targetCx: number, targetCy: number, maxW: number, maxH: number;
+    let capLeft: number, capTop: number, capWidth: number;
+    let align: "left" | "center";
+
+    // The mockup has a fixed control panel on the right (~340px). Reserve space
+    // so the caption never gets clipped by it. In a real presentation without
+    // the controls, this still looks balanced — just leaves a wider right margin.
+    const RIGHT_RESERVE = 360;
+    const usableW = m.width - RIGHT_RESERVE;
+
+    if (sideMode) {
+      // Panel: LEFT half of usable area | Caption: RIGHT half of usable area.
+      targetCx = usableW * 0.27;
+      targetCy = m.height * 0.5;
+      maxW = usableW * 0.46;
+      maxH = m.height * 0.82;
+      capLeft = usableW * 0.55;
+      capTop = m.height * 0.30;
+      capWidth = usableW * 0.42;
+      align = "left";
+    } else {
+      // Panel: TOP ~60% (centered in usable area) | Caption: BELOW.
+      targetCx = usableW * 0.5;
+      targetCy = m.height * 0.34;
+      maxW = usableW * 0.84;
+      maxH = m.height * 0.56;
+      capLeft = usableW * 0.08;
+      capTop = m.height * 0.72;
+      capWidth = usableW * 0.84;
+      align = "center";
+    }
+
     const dx = targetCx - cx;
     const dy = targetCy - cy;
-    const autoScale = Math.min(m.width * 0.6 / r.width, m.height * 0.7 / r.height, 2.4);
-    const s = scale ?? autoScale;
-    // Dim others
-    document.querySelectorAll<HTMLElement>(".mock-panel").forEach(p => {
-      if (p !== el) gsap.to(p, { opacity: 0.15, duration: 0.5 });
-    });
-    el.style.zIndex = "100";
-    gsap.to(el, { x: dx, y: dy, scale: s, duration: 0.8, ease: "power3.inOut" });
+    const scale = Math.min(maxW / r.width, maxH / r.height, 2.4);
+
+    return {
+      panel: { x: dx, y: dy, scale },
+      caption: { left: capLeft, top: capTop, width: capWidth, align },
+      mode: sideMode ? "side" : "below",
+    };
   }
 
-  /** Drop all spotlit panels back into the grid + restore opacities. */
-  gridReset() {
-    document.querySelectorAll<HTMLElement>(".mock-panel").forEach(p => {
-      gsap.to(p, { x: 0, y: 0, scale: 1, opacity: 1, duration: 0.7, ease: "back.inOut(1.1)",
-        clearProps: "transform,zIndex" });
-    });
+  private showSpotlightCaption(layout: SpotlightLayout, label: string, text: string) {
+    const cap = document.getElementById("mock-caption");
+    const lbl = document.getElementById("mock-caption-label");
+    const txt = document.getElementById("mock-caption-text");
+    if (!cap || !lbl || !txt) return;
+    // Override the bottom-fixed default with absolute positioning matching the layout
+    cap.style.left = `${layout.caption.left}px`;
+    cap.style.top = `${layout.caption.top}px`;
+    cap.style.bottom = "auto";
+    cap.style.transform = "none";
+    cap.style.width = `${layout.caption.width}px`;
+    cap.style.textAlign = layout.caption.align;
+    lbl.textContent = label;
+    lbl.style.display = label ? "block" : "none";
+    txt.innerHTML = text;
+    gsap.fromTo(cap,
+      { opacity: 0, y: layout.mode === "side" ? 0 : 18, x: layout.mode === "side" ? -16 : 0 },
+      { opacity: 1, y: 0, x: 0, duration: 0.55, ease: "power2.out" });
+  }
+
+  private resetCaptionPosition() {
+    const cap = document.getElementById("mock-caption");
+    if (!cap) return;
+    cap.style.left = "";
+    cap.style.top = "";
+    cap.style.bottom = "";
+    cap.style.transform = "";
+    cap.style.width = "";
+    cap.style.textAlign = "";
   }
 
   /** Draw an arrow between two panels (curves slightly outward). */
@@ -208,12 +344,16 @@ export class MockupController {
     if (lbl) lbl.textContent = text;
   }
 
-  /** Reset everything: clear arrows, particles, caption, restore opacities + grid. */
+  /** Reset everything: clear arrows, particles, caption, restore opacities + grid + spotlight. */
   clear() {
     document.querySelectorAll(".mock-arrow-path").forEach(p => p.remove());
     document.querySelectorAll(".mock-particle").forEach(p => p.remove());
-    this.caption("");
-    this.gridReset();
+    if (this.spotlightActive) {
+      this.spotlightOff();
+    } else {
+      this.caption("");
+      this.gridReset();
+    }
   }
 
   /** Print available commands to the console. */
@@ -224,7 +364,8 @@ export class MockupController {
       ["dim(id, opacity?)", "fade panel (default 0.35)"],
       ["undim(id|'all')", "restore opacity"],
       ["shake(id)", "wiggle"],
-      ["spotlight(id, scale?)", "center + scale up; dim the rest"],
+      ["spotlight(id, label?, text?)", "toggle: spotlight + side caption (P1/P2 right, others below)"],
+      ["spotlightOff()", "drop the active spotlight back to grid"],
       ["gridReset()", "drop all panels back to grid"],
       ["arrow(from, to, {color, width, durSec})", "draw a curved arrow"],
       ["particles(from, to, n?)", "fly N particles between panels"],
@@ -288,7 +429,13 @@ export function bindMockupControls() {
         case "highlight":   M.highlight(state.target); break;
         case "flash":       M.flash(state.target); break;
         case "shake":       M.shake(state.target); break;
-        case "spotlight":   M.spotlight(state.target); break;
+        case "spotlight": {
+          // Pull label + text from the caption inputs so one click does spotlight + caption
+          const t = (document.getElementById("cap-text") as HTMLInputElement | null)?.value ?? "";
+          const l = (document.getElementById("cap-label") as HTMLInputElement | null)?.value ?? "";
+          M.spotlight(state.target, l, t);
+          break;
+        }
         case "dim":         M.dim(state.target); break;
         case "undim-all":   M.undim("all"); break;
         case "arrow":       M.arrow(state.from, state.to); break;
