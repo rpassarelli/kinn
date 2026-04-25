@@ -77,6 +77,19 @@ class KinnAgent:
         _turn_start = time.time()
         belief = VSMBeliefState.model_validate_json(self.memory.read("belief_state"))
         probes = _probes_from_json(self.memory.read("probes"))
+        transcript = self.memory.read("transcript") or ""
+
+        from .reground import detect_fatigue, reground_output
+        if detect_fatigue(transcript):
+            if self.events:
+                self.events.emit(actor="agent", event="reground_triggered", turn=belief.turn + 1)
+            out = reground_output()
+            new_turn = belief.turn + 1
+            self.memory.write("belief_state",
+                belief.model_copy(update={"turn": new_turn}).model_dump_json())
+            self.memory.append("transcript",
+                f"### Turn {new_turn}\nUSER: {user_message}\nAGENT: {out.model_dump_json()}")
+            return out
 
         # If no pending probes, drain in-flight then sync-recompile.
         if not any(p.delivery_status == "pending" for p in probes):
