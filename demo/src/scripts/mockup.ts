@@ -253,3 +253,56 @@ export function startMockup() {
   console.log("%c⚡ Mockup ready. Type M.help() to see commands.",
     "color:#3fb950; font-weight:bold; font-size:14px");
 }
+
+/** Wire the floating control panel buttons to the M.* command API. */
+export function bindMockupControls() {
+  const M = window.M;
+  if (!M) return;
+
+  // Three slots: target (single-panel ops), from / to (relational ops).
+  const state = { target: "p1" as PanelId, from: "p1" as PanelId, to: "p2" as PanelId };
+
+  // Default-select the initial chips so the first click works without setup
+  document.querySelector<HTMLButtonElement>('.chip-row[data-role="target"] [data-pid="p1"]')?.classList.add("active");
+  document.querySelector<HTMLButtonElement>('.chip-row[data-role="from"] [data-pid="p1"]')?.classList.add("active");
+  document.querySelector<HTMLButtonElement>('.chip-row[data-role="to"] [data-pid="p2"]')?.classList.add("active");
+
+  // Chip selection: only one chip active per row
+  document.querySelectorAll<HTMLDivElement>(".chip-row").forEach(row => {
+    const role = row.dataset.role as "target" | "from" | "to";
+    row.addEventListener("click", e => {
+      const btn = (e.target as HTMLElement).closest<HTMLButtonElement>(".chip");
+      if (!btn) return;
+      row.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
+      btn.classList.add("active");
+      const pid = btn.dataset.pid as PanelId;
+      state[role] = pid;
+    });
+  });
+
+  // Command buttons
+  document.querySelectorAll<HTMLButtonElement>("[data-cmd]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const cmd = btn.dataset.cmd!;
+      switch (cmd) {
+        case "highlight":   M.highlight(state.target); break;
+        case "flash":       M.flash(state.target); break;
+        case "shake":       M.shake(state.target); break;
+        case "spotlight":   M.spotlight(state.target); break;
+        case "dim":         M.dim(state.target); break;
+        case "undim-all":   M.undim("all"); break;
+        case "arrow":       M.arrow(state.from, state.to); break;
+        case "particles":   M.particles(state.from, state.to, 6); break;
+        case "caption-show": {
+          const t = (document.getElementById("cap-text") as HTMLInputElement | null)?.value ?? "";
+          const l = (document.getElementById("cap-label") as HTMLInputElement | null)?.value ?? "";
+          M.caption(t, l);
+          break;
+        }
+        case "caption-clear": M.caption(""); break;
+        case "grid-reset":    M.gridReset(); break;
+        case "clear-all":     M.clear(); break;
+      }
+    });
+  });
+}
