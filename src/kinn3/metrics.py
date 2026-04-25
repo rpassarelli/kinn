@@ -28,9 +28,10 @@ class TurnMetrics:
 
     @property
     def cost_usd(self) -> float:
-        uncached = self.input_tokens - self.cached_input_tokens - self.cache_creation_tokens
+        # Anthropic's `input_tokens` ALREADY EXCLUDES cached portions — don't double-subtract.
+        # The four token categories are mutually exclusive; sum them at their respective prices.
         return (
-            uncached * _PRICING["input_per_M"] / 1_000_000
+            self.input_tokens * _PRICING["input_per_M"] / 1_000_000
             + self.cached_input_tokens * _PRICING["cache_read_per_M"] / 1_000_000
             + self.cache_creation_tokens * _PRICING["cache_write_per_M"] / 1_000_000
             + self.output_tokens * _PRICING["output_per_M"] / 1_000_000
