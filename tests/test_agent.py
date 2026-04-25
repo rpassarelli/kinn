@@ -1,3 +1,4 @@
+import asyncio
 import pytest
 from unittest.mock import AsyncMock, MagicMock
 from pydantic import ValidationError
@@ -73,3 +74,39 @@ async def test_turn_triggers_immediate_recompile_when_no_pending(memory):
     agent = KinnAgent(client=mock_client, memory=memory, probes=answered_probes)
     await agent.turn("hi")
     mock_client.recompile_probes_two_phase.assert_awaited()
+
+
+@pytest.mark.asyncio
+async def test_drain_awaits_background_recompile(memory):
+    """After turn 3, agent schedules a background recompile. drain() must await it."""
+    from kinn3.models import VSMBeliefState
+    import asyncio
+    # Seed belief at turn 2 so next turn (3) triggers recompile
+    memory.write("belief_state", VSMBeliefState(turn=2).model_dump_json())
+
+    recompile_started = asyncio.Event()
+    recompile_done = asyncio.Event()
+
+    async def slow_recompile(**kw):
+        recompile_started.set()
+        await asyncio.sleep(0.05)
+        recompile_done.set()
+        return [Probe(order=kw["next_order_start"], target_block=5,
+                      depth="dimension", draft="Who owns the P&L?")]
+
+    mock_client = AsyncMock()
+    mock_client.sample_answers = AsyncMock(return_value=["x"])
+    mock_client.predict_mutations = AsyncMock(return_value=[])
+    mock_client.run_turn_tool = AsyncMock(return_value=TurnOutput(
+        heard=["x"], delta="", next_question="what now?", signal_mutations=[],
+    ))
+    mock_client.recompile_probes_two_phase = AsyncMock(side_effect=slow_recompile)
+
+    agent = KinnAgent(client=mock_client, memory=memory, probes=list(BOOTSTRAP_PROBES))
+    await agent.turn("test")
+    # Recompile is scheduled but not yet awaited
+    await asyncio.wait_for(recompile_started.wait(), timeout=1)
+    assert not recompile_done.is_set()
+    # drain() must await it
+    await agent.drain()
+    assert recompile_done.is_set()
