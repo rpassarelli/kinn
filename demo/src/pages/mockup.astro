@@ -1,0 +1,238 @@
+---
+import "../styles/global.css";
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=1440" />
+  <title>kinn3 demo · mockup playground</title>
+</head>
+<body>
+  <header class="mock-header">
+    <h1>kinn3 demo · <span class="mock-h-sub">mockup playground</span></h1>
+    <div class="mock-h-meta">
+      type <code>M.help()</code> in console · panel ids <code>p1</code>..<code>p5</code>
+    </div>
+  </header>
+
+  <main>
+    <section class="mock-panel" id="mock-p1" data-pid="p1">
+      <span class="mock-tag">01</span>
+      <span class="mock-panel-label">P1</span>
+    </section>
+    <section class="mock-panel" id="mock-p2" data-pid="p2">
+      <span class="mock-tag">02</span>
+      <span class="mock-panel-label">P2</span>
+    </section>
+    <section class="mock-panel" id="mock-p3" data-pid="p3">
+      <span class="mock-tag">03</span>
+      <span class="mock-panel-label">P3</span>
+    </section>
+    <section class="mock-panel" id="mock-p4" data-pid="p4">
+      <span class="mock-tag">04</span>
+      <span class="mock-panel-label">P4</span>
+    </section>
+    <section class="mock-panel" id="mock-p5" data-pid="p5">
+      <span class="mock-tag">05</span>
+      <span class="mock-panel-label">P5</span>
+    </section>
+
+    <svg id="mock-arrows">
+      <defs>
+        <marker id="mock-arrowhead" viewBox="0 0 10 10" refX="9" refY="5"
+                markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor" />
+        </marker>
+      </defs>
+    </svg>
+
+    <div id="mock-caption" class="mock-caption">
+      <span id="mock-caption-label" class="mock-caption-label"></span>
+      <span id="mock-caption-text" class="mock-caption-text"></span>
+    </div>
+  </main>
+
+  <aside class="mock-cheatsheet">
+    <div class="cheat-title">cheatsheet</div>
+    <ul>
+      <li><code>M.highlight("p1")</code></li>
+      <li><code>M.flash("p2")</code></li>
+      <li><code>M.dim("p3")</code> · <code>M.undim()</code></li>
+      <li><code>M.shake("p4")</code></li>
+      <li><code>M.spotlight("p5")</code> · <code>M.gridReset()</code></li>
+      <li><code>M.arrow("p1","p2")</code></li>
+      <li><code>M.particles("p2","p4",6)</code></li>
+      <li><code>M.caption("hello","STEP 1")</code></li>
+      <li><code>M.label("p1","Phone")</code></li>
+      <li><code>M.clear()</code> · <code>M.help()</code></li>
+    </ul>
+  </aside>
+
+  <script>
+    import { startMockup } from "../scripts/mockup.ts";
+    startMockup();
+  </script>
+</body>
+
+<style is:global>
+  .mock-header {
+    padding: 12px 24px;
+    border-bottom: 1px solid var(--border);
+    background: var(--panel);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+  .mock-header h1 { font-size: 18px; font-weight: 700; }
+  .mock-h-sub { color: var(--text-dim); font-weight: 400; margin-left: 8px; }
+  .mock-h-meta { font-family: ui-monospace, monospace; font-size: 12px; color: var(--text-dim); }
+  .mock-h-meta code {
+    background: var(--panel-2); padding: 2px 6px; border-radius: 4px;
+    color: var(--gold); font-size: 11px;
+  }
+
+  main {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr 2fr;
+    grid-template-rows: 1fr 1fr;
+    grid-template-areas:
+      "p1 p2 p3"
+      "p5 p5 p4";
+    gap: 10px;
+    padding: 10px;
+    background: var(--bg);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .mock-panel {
+    background: var(--panel);
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    will-change: transform, opacity, box-shadow, background-color;
+  }
+  #mock-p1 { grid-area: p1; }
+  #mock-p2 { grid-area: p2; }
+  #mock-p3 { grid-area: p3; }
+  #mock-p4 { grid-area: p4; }
+  #mock-p5 { grid-area: p5; }
+
+  .mock-tag {
+    position: absolute;
+    top: 14px; right: 18px;
+    font-family: ui-monospace, monospace;
+    font-size: 56px;
+    font-weight: 800;
+    color: var(--text-muted);
+    opacity: 0.18;
+    line-height: 1;
+    pointer-events: none;
+  }
+  .mock-panel-label {
+    font-size: 64px;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    font-family: -apple-system, "Inter", sans-serif;
+  }
+
+  /* Distinct accent per panel so spotlight/flash effects are visible */
+  #mock-p1 { background: linear-gradient(135deg, #14181f, #1c2230); }
+  #mock-p1 .mock-panel-label { color: var(--user); }
+  #mock-p2 { background: linear-gradient(135deg, #14181f, #1c2230); }
+  #mock-p2 .mock-panel-label { color: var(--signal); }
+  #mock-p3 { background: linear-gradient(135deg, #14181f, #1c2230); }
+  #mock-p3 .mock-panel-label { color: var(--high); }
+  #mock-p4 { background: linear-gradient(135deg, #14181f, #1c2230); }
+  #mock-p4 .mock-panel-label { color: var(--gold); }
+  #mock-p5 { background: linear-gradient(135deg, #14181f, #1c2230); }
+  #mock-p5 .mock-panel-label { color: var(--goal); }
+
+  /* SVG arrows layer (covers full main) */
+  #mock-arrows {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 50;
+  }
+
+  /* Caption overlay */
+  .mock-caption {
+    position: absolute;
+    left: 50%;
+    bottom: 28px;
+    transform: translateX(-50%);
+    width: min(820px, 84vw);
+    text-align: center;
+    z-index: 200;
+    opacity: 0;
+    pointer-events: none;
+    color: var(--text);
+    background: linear-gradient(180deg, rgba(10,13,18,0.0), rgba(10,13,18,0.85) 50%);
+    padding: 22px 28px 14px;
+    border-radius: 16px;
+  }
+  .mock-caption-label {
+    display: block;
+    font-family: ui-monospace, monospace;
+    font-size: 13px;
+    letter-spacing: 0.26em;
+    color: var(--gold);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    font-weight: 800;
+  }
+  .mock-caption-text {
+    display: block;
+    font-size: 22px;
+    line-height: 1.45;
+    font-weight: 500;
+  }
+  .mock-caption-text b { color: var(--gold); font-weight: 700; }
+
+  /* Floating cheatsheet (right side) */
+  .mock-cheatsheet {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    width: 280px;
+    background: rgba(20,24,33,0.94);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+    z-index: 300;
+    font-family: ui-monospace, monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    backdrop-filter: blur(6px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+  }
+  .cheat-title {
+    color: var(--gold);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-size: 10px;
+    margin-bottom: 8px;
+  }
+  .mock-cheatsheet ul { list-style: none; margin: 0; padding: 0; }
+  .mock-cheatsheet li { padding: 3px 0; }
+  .mock-cheatsheet code {
+    color: var(--text);
+    background: rgba(255,255,255,0.04);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 11px;
+  }
+</style>
+</html>
