@@ -114,6 +114,12 @@ class KinnAgent:
         new_turn = belief.turn + 1
         new_belief = update_belief(belief, out.signal_mutations, turn=new_turn)
 
+        from .synthesis import is_synthesis_ready, synthesis_close_output
+        if is_synthesis_ready(new_belief):
+            if self.events:
+                self.events.emit(actor="agent", event="synthesis_close_reached", turn=new_turn)
+            out = synthesis_close_output()
+
         # 4. Mark probe answered
         for p in probes:
             if p.order == probe.order:
