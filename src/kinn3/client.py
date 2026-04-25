@@ -258,6 +258,33 @@ class _SamplerMixin:
                 pass
         return out
 
+    async def simulate_answer(
+        self, *, persona_markdown: str, probe: str, transcript: str, turn: int
+    ) -> str:
+        """Stakeholder simulator — uses cheaper model (Haiku) since it's not on the user-visible path."""
+        import os
+        assert self.raw is not None
+        sim_model = os.environ.get("KINN3_SIMULATOR_MODEL", "claude-haiku-4-5-20251001")
+        msg = await self.raw.messages.create(
+            model=sim_model,
+            max_tokens=400,
+            system=(
+                "You play a stakeholder in a business diagnostic interview. "
+                "Answer in the voice described by the persona. Stay consistent with prior answers. "
+                "Use fatigue rules from the persona. Do not break character."
+            ),
+            messages=[{"role": "user", "content": (
+                f"# Persona\n{persona_markdown}\n\n"
+                f"# Transcript so far\n{transcript}\n\n"
+                f"# Turn {turn}. Interviewer asks:\n{probe}\n\n"
+                "Respond in one paragraph."
+            )}],
+        )
+        for block in msg.content:
+            if block.type == "text":
+                return block.text.strip()
+        return ""
+
 
 class KinnClient(_SamplerMixin):
     """Thin wrapper around AsyncAnthropic with our defaults."""
