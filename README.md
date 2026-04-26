@@ -11,7 +11,7 @@
 
 **What kinn is.** A real-time interviewing engine that, after every answer, computes the **Expected Information Gain (EIG)** of every candidate next question against a Bayesian belief over the stakeholder's actual situation — and asks the one that reduces uncertainty the most. The frame is **BED-LLM** (Bayesian Experimental Design with LLM samplers): Opus 4.7 acts as both the *answer-distribution sampler* (predicting how a stakeholder might respond) and the *belief updater* (revising priors after each real answer). DSPy/GEPA compiles the prompts offline against simulated personas; runtime is a forced-tool-call loop on Anthropic's API with prompt caching.
 
-> **▶ Watch the 3-min demo:** **[youtu.be/oIVqGh6W79w](https://youtu.be/oIVqGh6W79w)** — narrated walkthrough of the BED-LLM loop running against a dental-clinic stakeholder.
+> **▶ Watch the 3-min demo:** **[youtu.be/oIVqGh6W79w](https://youtu.be/oIVqGh6W79w)** — narrated walkthrough of the BED-LLM loop running against a dental-clinic stakeholder. *(Mirror: [Google Drive](https://drive.google.com/file/d/1h4TOmnNhkwbfOHomqCdvQ-Y6dZbigWSc/view?usp=sharing))*
 >
 > **▶ Try it live (zero install):** **[kinn-demo.netlify.app](https://kinn-demo.netlify.app)** — opens the 5-panel narrative UI, plays a recorded session against a Bayesian belief that updates each turn. **No API key, no clone, no install.**
 

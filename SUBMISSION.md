@@ -13,4 +13,5 @@ Built solo across the Apr 21–28 hackathon window in three iterations (kinn →
 **Repo:** https://github.com/rpassarelli/kinn
 **Live demo (zero install):** https://kinn-demo.netlify.app
 **Video (3 min):** https://youtu.be/oIVqGh6W79w
+**Video (Drive mirror):** https://drive.google.com/file/d/1h4TOmnNhkwbfOHomqCdvQ-Y6dZbigWSc/view?usp=sharing
 **Author:** Rodrigo Passarelli (solo) · Claude Opus 4.7 (AI co-author)
