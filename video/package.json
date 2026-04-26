@@ -1,0 +1,23 @@
+{
+  "name": "kinn-video",
+  "version": "1.0.0",
+  "description": "Remotion composition for the kinn hackathon submission",
+  "private": true,
+  "scripts": {
+    "studio": "remotion studio",
+    "build": "remotion render KinnDemo out/kinn.mp4",
+    "still": "remotion still KinnDemo out/frame.png"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.0",
+    "@remotion/google-fonts": "^4.0.451",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0",
+    "remotion": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "typescript": "^5.6.0"
+  }
+}

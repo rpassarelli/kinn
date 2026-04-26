@@ -1,0 +1,31 @@
+cff-version: 1.2.0
+title: "kinn — a Bayesian diagnostic interview engine"
+message: "If you reference this work, please cite it as below."
+type: software
+authors:
+  - family-names: Passarelli
+    given-names: Rodrigo
+    affiliation: "Built with Opus 4.7 hackathon (Cerebral Valley, 2026)"
+date-released: "2026-04-26"
+version: "0.1.0-hackathon"
+license: MIT
+repository-code: "https://github.com/rpassarelli/kinn"
+keywords:
+  - bayesian-experimental-design
+  - bed-llm
+  - claude-opus-4-7
+  - dspy
+  - gepa
+  - diagnostic-interview
+  - viable-system-model
+abstract: >
+  kinn is a real-time Bayesian diagnostic interview engine. After every
+  stakeholder answer, it computes the Expected Information Gain of every
+  candidate next question against a Bayesian belief over the stakeholder's
+  situation, and asks the one that collapses the most uncertainty. The frame
+  is BED-LLM (Bayesian Experimental Design with LLM samplers): Claude Opus
+  4.7 is both the answer-distribution sampler and the belief updater. DSPy
+  with GEPA compiles the prompts offline; runtime is a forced-tool-call loop
+  with prompt caching, two-phase recompile, and dual-algedonic state. Built
+  solo as a hackathon submission (kinn → kinn2 → kinn3 iterations) within the
+  Apr 21–28, 2026 window.

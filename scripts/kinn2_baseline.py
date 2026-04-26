@@ -1,22 +1,25 @@
-"""Scrape the most recent kinn2.1 calibration metrics for the 5-persona baseline.
-Output: /root/kinn2/kinn3/calibration-runs/kinn2-baseline/baseline.json
+"""Scrape the most recent kinn2 calibration metrics for the 5-persona baseline.
 
-Real schema (discovered post-plan): kinn2.1 writes the aggregate to
-`calibration/runs/<ts>/metrics.yml` at the RUN ROOT (not sessions-by-iter/*/aggregate.yml
-as the v8 plan assumed). The metrics.yml has shape:
+HISTORICAL: this script generated the committed baseline at
+`calibration-runs/kinn2-baseline/baseline.json` from the kinn2 predecessor
+iteration's run output. It is preserved for reproducibility but does NOT need
+to run on a fresh clone — the baseline JSON is already in the repo.
+
+Re-running requires the kinn2 calibration runs on disk. Set KINN2_ROOT to point
+at the kinn2 monorepo root (e.g. `KINN2_ROOT=/path/to/kinn2 uv run python
+scripts/kinn2_baseline.py`).
+
+Schema notes: kinn2 writes the aggregate to `calibration/runs/<ts>/metrics.yml`
+at the RUN ROOT. The metrics.yml has shape:
     iter_0:
       per_persona_composite: {dental-clinic: ..., ...}
       baseline_composite_mean: ...
-    iter_1:
-      per_persona_composite: {...}  # may exist if proposal applied
-      decision: revert | accept
-
-We use iter_0's per_persona_composite as the baseline (the unmutated kinn2.1 system).
-If multiple metrics.yml files exist, we use the freshest within --hours.
+We use iter_0's per_persona_composite as the baseline (the unmutated kinn2 system).
 """
 from __future__ import annotations
 import argparse
 import json
+import os
 import statistics
 import sys
 import time
@@ -25,9 +28,13 @@ from pathlib import Path
 
 import yaml
 
-KINN2_ROOT = Path("/root/kinn2")
+# KINN2_ROOT defaults to two levels above this file (which assumes the historical
+# layout where this script lived inside `kinn2/kinn3/scripts/`). Override via env
+# var when running on a fresh clone outside the original monorepo.
+SCRIPT_DIR = Path(__file__).resolve().parent
+KINN2_ROOT = Path(os.environ.get("KINN2_ROOT", SCRIPT_DIR.parent.parent))
 RUNS_DIR = KINN2_ROOT / "calibration" / "runs"
-OUT_DIR = KINN2_ROOT / "kinn3" / "calibration-runs" / "kinn2-baseline"
+OUT_DIR = SCRIPT_DIR.parent / "calibration-runs" / "kinn2-baseline"
 PERSONAS = ["dental-clinic", "shinpads-ecommerce", "family-manufacturing", "solo-agency", "racks-reseller"]
 
 

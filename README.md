@@ -54,7 +54,7 @@ npm run dev
 | [`tests/`](./tests/) | 24 test files including live API tests, cache-hit verification, concurrent-recompile contracts, order-of-operations gates. |
 | [`scripts/`](./scripts/) | CLI entrypoints: `run_calibration.py`, `compile_dspy.py`, `benchmark_vs_kinn2.py`, `preflight.py`. |
 | [`demo/`](./demo/) | Astro 5 + GSAP demo UI. 5-panel narrative: phone → signals → VSM → router → questioner. |
-| [`video/`](./video/) | Remotion 4 source for the 3-min submission video. |
+| [`video/`](./video/) | Remotion 4 source for the 3-min submission video. (Heavy media inputs gitignored; render output is on YouTube — see [SUBMISSION.md](./SUBMISSION.md).) |
 | [`calibration-runs/kinn2-baseline/`](./calibration-runs/kinn2-baseline/) | Frozen baseline scores from the predecessor iteration, used by `benchmark_vs_kinn2.py`. |
 | [`ARCHITECTURE.md`](./ARCHITECTURE.md) | Full architecture write-up. |
 | [`RETROSPECTIVE.md`](./RETROSPECTIVE.md) | Honest postmortem — including the gate that FAILED (mean 0.852 vs 0.920 target). |
@@ -106,6 +106,51 @@ Specific Opus 4.7 capabilities exercised:
 - **Dual-gate benchmark** — every change is scored against the frozen kinn2 baseline (mean=0.9203 across 5 personas). The current kinn3 mean is **0.852** — a measurable regression. We document this in [`RETROSPECTIVE.md`](./RETROSPECTIVE.md) rather than ship a hidden failure.
 - **GEPA compilation** — DSPy signatures + custom metric, compiled offline via `scripts/compile_dspy.py`.
 - **Retry policy** — handles `OverloadedError (529)` after a real GEPA failure during the build; covered by test.
+
+## Roadmap — what comes next
+
+This submission is a working v1 inside a hackathon week. The path beyond looks like:
+
+### 1. Claude Managed Agents — long-running diagnostic sessions
+
+The current loop is a forced-tool-call structured-output engine running a single session in-process. The natural next step is **[Claude Managed Agents](https://platform.claude.com/docs/en/managed-agents/overview)**: each diagnostic session becomes a managed agent that can pause, resume, hand off, and run for days/weeks instead of minutes. This unlocks:
+
+- **Discovery sprints** — kinn drives discovery across multiple stakeholders over days, threading their answers into a single belief.
+- **Async interviewing** — the stakeholder gets a notification, answers when convenient, the agent picks up from where it paused without losing context.
+- **Audit trail as durable memory** — every belief revision is queryable and surfaceable to the user weeks later.
+- **Multi-tenant kinn-as-a-service** — one Managed Agent per client, isolated state, billed per session.
+
+The session-stateful architecture here (`agent.turn()`, `drain()`, two-phase recompile, `Memory tool`-style state files) maps directly to the Managed Agents primitive. This is also the path to the **Best Use of Claude Managed Agents** $5K special prize — kinn's design is purpose-built for what Managed Agents are good at.
+
+### 2. Model-routing refinement — cost vs. quality on the right axis
+
+Today: Opus 4.7 for the runtime loop; Haiku 4.5 for the calibration simulator only. The roadmap is more nuanced:
+
+- **Haiku 4.5 for the answer-distribution sampler** — the EIG calculation is many-samples-per-question; Opus is overkill there. Haiku ought to give equivalent EIG at ~10× lower cost.
+- **Sonnet 4.6 for cost-sensitive deployments** — same loop, ~5× cheaper than Opus, with measurable EIG floor before quality regression.
+- **Opus 4.7 reserved for belief updates and synthesis** — the high-stakes posterior revisions where regression hurts most.
+- **Adaptive routing on stakeholder fatigue + question complexity** — the dual-algedonic state already tracks fatigue; route to faster/cheaper models when fatigue is high (the user wants the call to end), to deeper models when complexity is high.
+
+The infrastructure (`KINN3_MODEL`, `KINN3_SIMULATOR_MODEL` env vars, separate client primitives) already exists — this is mostly a calibration-and-benchmarking exercise, not new code.
+
+### 3. `business.md` generator — the user's keepsake
+
+A diagnostic session produces an internal belief over the user's business. Today that belief is internal state. The roadmap turns it into a **published artifact** — a `business.md` the user can:
+
+- **Hand to a fractional CTO on day 1** instead of paying for week-1 discovery — the consultant lands with the same context that took kinn an hour to extract.
+- **Paste into ChatGPT / Claude / any AI tool** to bootstrap with their actual context — solving the "every AI conversation starts at zero" problem.
+- **Use as a living document** — every kinn session updates it, with a diff log of what changed and why.
+- **Share with their team** to align on what the business actually is — the synthesis as alignment artifact, not just analysis output.
+
+Format mirrors the public business briefing in the kinn1 lineage — demographics, services, revenue mix, key constraints, what's working / broken, leverage hypotheses — but **every claim is sourced to a specific turn in the diagnostic transcript**. Hallucinations are structurally impossible because every assertion in `business.md` traces back to "the user said X on turn Y." The belief becomes auditable, citable, refutable — three things LLM output normally isn't.
+
+### 4. Other directions worth exploring
+
+- **Voice interface for live discovery calls** — kinn whispers next questions in the consultant's ear during a real Zoom (Otter.ai meets BED-LLM). Live latency budget is brutal but Haiku-at-the-sampler makes it tractable.
+- **Decision card extraction** — the kinn1 tamagotchi vision: distill the diagnostic into "decisions you're holding" cards that accumulate evidence across sessions, like Ray Dalio's principles but per-decision and with provenance.
+- **Multi-stakeholder synthesis** — interview the founder + the COO + the head of operations separately; kinn synthesizes the disagreement, flags the contradictions, and produces a single belief that weights stakeholder credibility on each block.
+- **Custom personas as what-if simulators** — upload your own simulator persona ("a B2B SaaS founder", "a manufacturing exec") for what-if discovery rehearsal before the real call.
+- **Source attribution UI** — every claim in the synthesis is hover-clickable to the turn that produced it. Plus a "challenge this claim" button that re-asks the question and updates the belief.
 
 ## Honest limitations
 

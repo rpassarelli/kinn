@@ -1,0 +1,10 @@
+node_modules/
+out/
+.cache/
+.remotion/
+*.log
+
+# Heavy media inputs (kept out of git to avoid bloat; rendered output lives on YouTube — see SUBMISSION.md).
+# Replace these locally to render the full composition; the Remotion source in src/ is the part we ship.
+public/video/*.mp4
+public/audio/*.mp3
