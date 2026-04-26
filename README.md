@@ -11,7 +11,9 @@
 
 **What kinn is.** A real-time interviewing engine that, after every answer, computes the **Expected Information Gain (EIG)** of every candidate next question against a Bayesian belief over the stakeholder's actual situation — and asks the one that reduces uncertainty the most. The frame is **BED-LLM** (Bayesian Experimental Design with LLM samplers): Opus 4.7 acts as both the *answer-distribution sampler* (predicting how a stakeholder might respond) and the *belief updater* (revising priors after each real answer). DSPy/GEPA compiles the prompts offline against simulated personas; runtime is a forced-tool-call loop on Anthropic's API with prompt caching.
 
-> **▶ Try it live (zero install):** **[kinn-demo.netlify.app](https://kinn-demo.netlify.app)** — opens the 5-panel narrative UI, plays a recorded dental-clinic session against a Bayesian belief that updates each turn. **No API key, no clone, no install.**
+> **▶ Watch the 3-min demo:** **[youtu.be/oIVqGh6W79w](https://youtu.be/oIVqGh6W79w)** — narrated walkthrough of the BED-LLM loop running against a dental-clinic stakeholder.
+>
+> **▶ Try it live (zero install):** **[kinn-demo.netlify.app](https://kinn-demo.netlify.app)** — opens the 5-panel narrative UI, plays a recorded session against a Bayesian belief that updates each turn. **No API key, no clone, no install.**
 
 ![kinn loop — User Input → Signals Triage (Facts / Company Algedonic / User Algedonic) → Denoiser (Read · Update · Pick · Denoise) → Questioner. Cycles 1–3× per turn. Out: fitted question, sharpened belief.](./docs/img/architecture-loop.png)
 
@@ -20,7 +22,7 @@
 | Criterion (weight) | Where to look |
 |---|---|
 | **Impact (30%)** | [Impact](#impact-30) — diagnostic interviewing is a billion-dollar consulting bottleneck; this collapses it from weeks of post-call synthesis to a single live session. |
-| **Demo (25%)** | **Live: [kinn-demo.netlify.app](https://kinn-demo.netlify.app)** (zero install). Source in [`./demo`](./demo) — Astro 5 + GSAP. 3-min video: see [SUBMISSION.md](./SUBMISSION.md). |
+| **Demo (25%)** | **3-min video: [youtu.be/oIVqGh6W79w](https://youtu.be/oIVqGh6W79w)** · **Live UI: [kinn-demo.netlify.app](https://kinn-demo.netlify.app)** (zero install). Source in [`./demo`](./demo) — Astro 5 + GSAP. |
 | **Opus 4.7 Use (25%)** | [Opus 4.7 Use](#opus-47-use-25) — forced-tool-call structured output, prompt caching for system-prompt + persona + history, two-phase recompile during long sessions, dual-algedonic state separation. Not a wrapper — Opus 4.7 IS the inference engine for both the answer sampler and the belief updater. |
 | **Depth & Execution (20%)** | [Depth](#depth--execution-20) — 23 test files / 63 test functions, dual-gate benchmark vs kinn2 baseline (mean 0.852 vs 0.920 — fail honestly recorded in [`RETROSPECTIVE.md`](./RETROSPECTIVE.md)), GEPA compilation pipeline, 5 calibration personas, retry policy with `OverloadedError` handling. |
 
