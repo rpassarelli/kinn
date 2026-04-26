@@ -11,6 +11,8 @@
 
 **What kinn is.** A real-time interviewing engine that, after every answer, computes the **Expected Information Gain (EIG)** of every candidate next question against a Bayesian belief over the stakeholder's actual situation — and asks the one that reduces uncertainty the most. The frame is **BED-LLM** (Bayesian Experimental Design with LLM samplers): Opus 4.7 acts as both the *answer-distribution sampler* (predicting how a stakeholder might respond) and the *belief updater* (revising priors after each real answer). DSPy/GEPA compiles the prompts offline against simulated personas; runtime is a forced-tool-call loop on Anthropic's API with prompt caching.
 
+> **▶ Try it live (zero install):** **[kinn-demo.netlify.app](https://kinn-demo.netlify.app)** — opens the 5-panel narrative UI, plays a recorded dental-clinic session against a Bayesian belief that updates each turn. **No API key, no clone, no install.**
+
 ![kinn loop — User Input → Signals Triage (Facts / Company Algedonic / User Algedonic) → Denoiser (Read · Update · Pick · Denoise) → Questioner. Cycles 1–3× per turn. Out: fitted question, sharpened belief.](./docs/img/architecture-loop.png)
 
 ## TL;DR for judges
@@ -18,7 +20,7 @@
 | Criterion (weight) | Where to look |
 |---|---|
 | **Impact (30%)** | [Impact](#impact-30) — diagnostic interviewing is a billion-dollar consulting bottleneck; this collapses it from weeks of post-call synthesis to a single live session. |
-| **Demo (25%)** | [`./demo`](./demo) — Astro 5 + GSAP narrative UI. Run `npm run dev` (no API key needed; plays a recorded session). 3-min video: see [SUBMISSION.md](./SUBMISSION.md). |
+| **Demo (25%)** | **Live: [kinn-demo.netlify.app](https://kinn-demo.netlify.app)** (zero install). Source in [`./demo`](./demo) — Astro 5 + GSAP. 3-min video: see [SUBMISSION.md](./SUBMISSION.md). |
 | **Opus 4.7 Use (25%)** | [Opus 4.7 Use](#opus-47-use-25) — forced-tool-call structured output, prompt caching for system-prompt + persona + history, two-phase recompile during long sessions, dual-algedonic state separation. Not a wrapper — Opus 4.7 IS the inference engine for both the answer sampler and the belief updater. |
 | **Depth & Execution (20%)** | [Depth](#depth--execution-20) — 23 test files / 63 test functions, dual-gate benchmark vs kinn2 baseline (mean 0.852 vs 0.920 — fail honestly recorded in [`RETROSPECTIVE.md`](./RETROSPECTIVE.md)), GEPA compilation pipeline, 5 calibration personas, retry policy with `OverloadedError` handling. |
 
@@ -151,7 +153,18 @@ A diagnostic session produces an internal belief over the user's business. Today
 
 Format mirrors the public business briefing in the kinn1 lineage — demographics, services, revenue mix, key constraints, what's working / broken, leverage hypotheses — but **every claim is sourced to a specific turn in the diagnostic transcript**. Hallucinations are structurally impossible because every assertion in `business.md` traces back to "the user said X on turn Y." The belief becomes auditable, citable, refutable — three things LLM output normally isn't.
 
-### 4. Other directions worth exploring
+### 4. Live data + database + MCP integration — beliefs grounded in reality, not just recall
+
+The current loop is purely conversational — kinn knows what the stakeholder *says*. The next step is to ground belief updates in observable reality:
+
+- **Database integration** — connect kinn to the user's actual operational database (Postgres, Supabase, BigQuery, the SQLite the SMB doesn't know they have). When the stakeholder says "we lose 30% of patients to no-shows," kinn queries the `appointments` table to verify and updates the belief on observed evidence, not stated belief alone.
+- **Live API datapoints** — pull from existing systems (Stripe revenue, HubSpot pipeline, Toggl time-tracking, GitHub repo health, Google Analytics traffic) so the diagnostic uses real-world signals instead of stakeholder recall. The agent can ask "what's your churn?" *and* read it from the source of truth in the same turn.
+- **MCP tool integration** — kinn becomes an MCP host that talks to the user's existing tools. Ask the dental clinic's appointment system for last-90-days no-show rate; get a number; revise belief on Block 3 (operations) accordingly. Every connected system becomes another sensory input for the diagnostic.
+- **Source attribution per claim** — every belief update is tagged with its provenance (`said:`, `db:postgres.appointments`, `api:stripe`, `mcp:gcal`). The synthesis distinguishes "the user believes X" from "the data shows X" — and **disagreements between stated and observed become first-class signals** ("the founder thinks churn is 5%; Stripe says 12% — that gap is the discovery").
+
+This converts kinn from a "structured-conversation tool" into a **"discovery-via-actual-systems tool"** — what fractional CTOs do today by reading dashboards while talking to founders, but compressed into a single live session and applied to operations the human consultant doesn't have time to investigate.
+
+### 5. Other directions worth exploring
 
 - **Voice interface for live discovery calls** — kinn whispers next questions in the consultant's ear during a real Zoom (Otter.ai meets BED-LLM). Live latency budget is brutal but Haiku-at-the-sampler makes it tractable.
 - **Decision card extraction** — the kinn1 tamagotchi vision: distill the diagnostic into "decisions you're holding" cards that accumulate evidence across sessions, like Ray Dalio's principles but per-decision and with provenance.
