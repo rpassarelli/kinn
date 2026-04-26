@@ -1,5 +1,7 @@
 # kinn — a Bayesian diagnostic interview engine
 
+![Meet kinn — a Bayesian diagnostic interview engine. Built with Claude Opus 4.7 for the Cerebral Valley hackathon, Apr 21–28 2026.](./docs/img/hero-kinn.png)
+
 > **Built with Opus 4.7 hackathon submission · Apr 21–28, 2026**
 > Authored entirely within the hackathon window. Earliest commit on the kinn lineage: `b81880a` at **2026-04-22 10:16 +0100** (24 hours after the hackathon opened). The published repo's earliest commit is `32feb49` at **2026-04-25 01:06 +0100**. Full git history is the start-date proof. **Solo human author: Rodrigo Passarelli.** Claude Opus 4.7 used as AI assistant throughout (`Co-Authored-By` in commits — that's the whole point of this hackathon).
 
@@ -9,6 +11,8 @@
 
 **What kinn is.** A real-time interviewing engine that, after every answer, computes the **Expected Information Gain (EIG)** of every candidate next question against a Bayesian belief over the stakeholder's actual situation — and asks the one that reduces uncertainty the most. The frame is **BED-LLM** (Bayesian Experimental Design with LLM samplers): Opus 4.7 acts as both the *answer-distribution sampler* (predicting how a stakeholder might respond) and the *belief updater* (revising priors after each real answer). DSPy/GEPA compiles the prompts offline against simulated personas; runtime is a forced-tool-call loop on Anthropic's API with prompt caching.
 
+![kinn loop — User Input → Signals Triage (Facts / Company Algedonic / User Algedonic) → Denoiser (Read · Update · Pick · Denoise) → Questioner. Cycles 1–3× per turn. Out: fitted question, sharpened belief.](./docs/img/architecture-loop.png)
+
 ## TL;DR for judges
 
 | Criterion (weight) | Where to look |
@@ -16,7 +20,7 @@
 | **Impact (30%)** | [Impact](#impact-30) — diagnostic interviewing is a billion-dollar consulting bottleneck; this collapses it from weeks of post-call synthesis to a single live session. |
 | **Demo (25%)** | [`./demo`](./demo) — Astro 5 + GSAP narrative UI. Run `npm run dev` (no API key needed; plays a recorded session). 3-min video: see [SUBMISSION.md](./SUBMISSION.md). |
 | **Opus 4.7 Use (25%)** | [Opus 4.7 Use](#opus-47-use-25) — forced-tool-call structured output, prompt caching for system-prompt + persona + history, two-phase recompile during long sessions, dual-algedonic state separation. Not a wrapper — Opus 4.7 IS the inference engine for both the answer sampler and the belief updater. |
-| **Depth & Execution (20%)** | [Depth](#depth--execution-20) — 24 test files, dual-gate benchmark vs kinn2 baseline (mean 0.852 vs 0.920 — fail honestly recorded in [`RETROSPECTIVE.md`](./RETROSPECTIVE.md)), GEPA compilation pipeline, 5 calibration personas, retry policy with `OverloadedError` handling. |
+| **Depth & Execution (20%)** | [Depth](#depth--execution-20) — 23 test files / 63 test functions, dual-gate benchmark vs kinn2 baseline (mean 0.852 vs 0.920 — fail honestly recorded in [`RETROSPECTIVE.md`](./RETROSPECTIVE.md)), GEPA compilation pipeline, 5 calibration personas, retry policy with `OverloadedError` handling. |
 
 ## Quick start (30 seconds, no API key)
 
@@ -46,15 +50,18 @@ npm run data -- ../calibration-runs/latest/dental-clinic
 npm run dev
 ```
 
+![kinn demo — 5-panel narrative UI mid-session: live chat, signals heard, Viable System Model 6-block read, next-probe build, router/decision.](./docs/img/demo-5-panels.png)
+
 ## Repository tour
 
 | Path | What it is |
 |---|---|
 | [`src/kinn3/`](./src/kinn3/) | Engine: BED-LLM core, Bayesian belief, EIG selection, agent loop, Anthropic client, prompt cache. |
-| [`tests/`](./tests/) | 24 test files including live API tests, cache-hit verification, concurrent-recompile contracts, order-of-operations gates. |
+| [`tests/`](./tests/) | 23 test files / 63 test functions including live API tests, cache-hit verification, concurrent-recompile contracts, order-of-operations gates. |
 | [`scripts/`](./scripts/) | CLI entrypoints: `run_calibration.py`, `compile_dspy.py`, `benchmark_vs_kinn2.py`, `preflight.py`. |
 | [`demo/`](./demo/) | Astro 5 + GSAP demo UI. 5-panel narrative: phone → signals → VSM → router → questioner. |
 | [`video/`](./video/) | Remotion 4 source for the 3-min submission video. (Heavy media inputs gitignored; render output is on YouTube — see [SUBMISSION.md](./SUBMISSION.md).) |
+| [`calibration/`](./calibration/) | 5 stakeholder personas (dental-clinic, shinpads-ecommerce, family-manufacturing, solo-agency, racks-reseller) + 11 runtime invariants. Personas drive the calibration loop; invariants enforce structural correctness on every turn output. |
 | [`calibration-runs/kinn2-baseline/`](./calibration-runs/kinn2-baseline/) | Frozen baseline scores from the predecessor iteration, used by `benchmark_vs_kinn2.py`. |
 | [`ARCHITECTURE.md`](./ARCHITECTURE.md) | Full architecture write-up. |
 | [`RETROSPECTIVE.md`](./RETROSPECTIVE.md) | Honest postmortem — including the gate that FAILED (mean 0.852 vs 0.920 target). |
@@ -101,7 +108,7 @@ Specific Opus 4.7 capabilities exercised:
 
 ## Depth & Execution (20%)
 
-- **24 test files** including live-API tests, cache-hit verification, concurrent-recompile contracts, order-of-operations gates.
+- **23 test files / 63 test functions** including live-API tests, cache-hit verification, concurrent-recompile contracts, order-of-operations gates.
 - **5 calibration personas** (dental-clinic, shinpads-ecommerce, family-manufacturing, solo-agency, racks-reseller) — see persona specs that ship as fixtures.
 - **Dual-gate benchmark** — every change is scored against the frozen kinn2 baseline (mean=0.9203 across 5 personas). The current kinn3 mean is **0.852** — a measurable regression. We document this in [`RETROSPECTIVE.md`](./RETROSPECTIVE.md) rather than ship a hidden failure.
 - **GEPA compilation** — DSPy signatures + custom metric, compiled offline via `scripts/compile_dspy.py`.

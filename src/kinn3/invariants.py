@@ -6,7 +6,7 @@ from pathlib import Path
 import yaml
 from .models import TurnOutput
 
-_INVARIANTS_PATH = Path(__file__).resolve().parents[3] / "calibration" / "invariants.yml"
+_INVARIANTS_PATH = Path(__file__).resolve().parents[2] / "calibration" / "invariants.yml"
 
 
 def load_invariants() -> list[dict]:

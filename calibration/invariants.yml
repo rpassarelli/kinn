@@ -1,0 +1,120 @@
+# kinn2 — locked design invariants
+#
+# The Proposer agent MUST NOT generate edits that weaken, remove, or refactor away
+# these rules. Each invariant has a rule, a why, the files it protects, and violation
+# signals the Proposer must self-check against before submitting a proposal.
+#
+# This file itself is protected: the Proposer cannot edit it. Only a human editor
+# (the user) may modify invariants.
+
+invariants:
+
+  - id: role_separation
+    rule: Denoiser is silent; Questioner is the only user-facing stage.
+    why: The dual-algedonic design assumes two separate viable systems — org-under-diagnosis and conversation-itself. Merging them erases the boundary.
+    protects_files:
+      - .claude/skills/denoiser.md
+      - .claude/skills/questioner.md
+    violation_signals:
+      - Denoiser section describing "output to user"
+      - Questioner section describing "classify signals into blocks"
+      - merging denoiser.md and questioner.md into one file
+
+  - id: refresh_not_append
+    rule: vsm-signals.md is rewritten each turn; never append-only.
+    why: The stakeholder must watch the image "improve" in real time. Append creates a log, not an image.
+    protects_files:
+      - .claude/skills/denoiser.md
+    violation_signals:
+      - '"Append each signal" applied to vsm-signals.md'
+      - removal of "Rewrite ... in full" language
+      - introduction of per-turn timestamps as cumulative headers
+
+  - id: append_only_transcript
+    rule: session-transcript.md is append-only.
+    why: Conversation history must be recoverable for /redo and for audit.
+    protects_files:
+      - .claude/skills/questioner.md
+    violation_signals:
+      - "rewrite the transcript"
+      - removing "Never rewrite prior turns" language
+
+  - id: dual_algedonic
+    rule: Block 4 of vsm-signals tracks ORG pain. stakeholder-state.md tracks PERSON pain during the conversation. Do not collapse or merge these streams.
+    why: Two different viable systems. Collapsing erases the reground trigger — the Questioner would stop distinguishing "my business is hurting" from "I am hurting right now."
+    protects_files:
+      - .claude/skills/denoiser.md
+      - .claude/skills/questioner.md
+      - models/vsm.md
+    violation_signals:
+      - routing "I'm tired" / "I can't think right now" into Block 4
+      - removing stakeholder-state.md entirely
+      - moving stakeholder-state fields into vsm-signals.md
+
+  - id: reground_is_dedicated_turn
+    rule: Reground mode spends a whole turn on the three beats (acknowledge, re-contract, consent). No VSM probe that turn. Denoiser's target persists for the next turn.
+    why: Half-measures (lighter probe instead of reground) don't restore the informant; they just drain them more slowly.
+    protects_files:
+      - .claude/skills/questioner.md
+    violation_signals:
+      - "soften the probe instead of regrounding"
+      - removing the three-beat template
+      - allowing a VSM probe in a reground turn
+
+  - id: what_vs_how_separation
+    rule: Denoiser owns WHAT (target_block, target_block_resolution, depth, intent, probe_draft, anchor_phrase). Questioner owns HOW (empathic mirror, wording, timing, load-fit, reground decision). Questioner may paraphrase probe_draft but cannot change subject or depth.
+    why: Subject drift (Questioner substituting its own question for the Denoiser's) is the #1 observed failure in live runs.
+    protects_files:
+      - .claude/skills/denoiser.md
+      - .claude/skills/questioner.md
+    violation_signals:
+      - Questioner deciding depth or target_block
+      - Denoiser writing empathic mirrors
+      - removing the Questioner's subject-match validation gate
+
+  - id: six_blocks_fixed
+    rule: The 6 VSM blocks are fixed in content and order — Market, Purpose/S5, Change Moment, Algedonic, Vertical Coherence, Horizontal Viability.
+    why: The Denoiser's "lowest-resolution block in 1→6 order" rule depends on fixed ordering and fixed count.
+    protects_files:
+      - .claude/skills/denoiser.md
+      - models/vsm.md
+    violation_signals:
+      - adding a 7th block
+      - removing any existing block
+      - reordering
+
+  - id: coarse_to_fine_ladder
+    rule: Probe depth must match block resolution per the Intent-depth ladder. empty→identity, low→dimension, mid→facet, high→gap.
+    why: Asking a specific facet of an empty block is the original failure mode ("who is your customer?" to a block at Resolution=empty).
+    protects_files:
+      - .claude/skills/denoiser.md
+    violation_signals:
+      - removing depth or target_block_resolution from next-question.md format
+      - allowing depth > what the ladder permits for the resolution
+      - removing the Intent-depth ladder section
+
+  - id: probe_draft_required
+    rule: Denoiser's handoff must include probe_draft — the literal question at the correct depth. Questioner delivers this, optionally paraphrased.
+    why: Without probe_draft, the Questioner invents a probe and drifts from the Denoiser's intent.
+    protects_files:
+      - .claude/skills/denoiser.md
+      - .claude/skills/questioner.md
+    violation_signals:
+      - removing probe_draft from next-question.md format
+      - telling the Questioner to "compose its own question from the intent"
+
+  - id: proposer_new_skills_cap
+    rule: The Proposer may create at most 3 NEW skill files across ALL calibration iterations combined. Skills already present before the first calibration run (denoiser, questioner, stakeholder-sim, judge, proposer) do not count.
+    why: Cap architectural entropy. 3 new skills can handle structurally different failure classes (e.g., add a "classifier" or "synthesizer") without fragmenting the system beyond human comprehension.
+    protects_files:
+      - calibration/proposals/history.md
+    violation_signals:
+      - Proposer's 4th new-skill proposal (must be auto-rejected)
+
+  - id: invariants_immutable_by_proposer
+    rule: The Proposer cannot modify this invariants.yml file under any circumstance.
+    why: Invariants exist precisely to constrain the Proposer. Letting it edit them defeats the purpose.
+    protects_files:
+      - calibration/invariants.yml
+    violation_signals:
+      - any proposal that touches invariants.yml
